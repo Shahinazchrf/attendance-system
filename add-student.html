@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Attendly — Add Student</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar">
+      <div class="brand">
+        <img src="https://via.placeholder.com/40" alt="Attendly logo" class="logo" />
+        <span class="site-title">Attendly</span>
+      </div>
+      <button class="nav-toggle" aria-label="Open navigation">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="attendance.html">Attendance List</a></li>
+        <li><a href="add-student.html" class="active">Add Student</a></li>
+        <li><a href="#">Reports</a></li>
+        <li><a href="#">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="page-container">
+    <section class="panel small-form">
+      <h1>Add Student</h1>
+      <form id="add-student-form" novalidate>
+        <label>
+          Student ID
+          <input type="text" id="student-id" name="studentId" inputmode="numeric" />
+          <small class="error" id="err-id"></small>
+        </label>
+
+        <label>
+          Last Name
+          <input type="text" id="last-name" name="lastName" />
+          <small class="error" id="err-last"></small>
+        </label>
+
+        <label>
+          First Name
+          <input type="text" id="first-name" name="firstName" />
+          <small class="error" id="err-first"></small>
+        </label>
+
+        <label>
+          Email
+          <input type="email" id="email" name="email" />
+          <small class="error" id="err-email"></small>
+        </label>
+
+        <div class="form-actions">
+          <button type="submit" class="btn primary">Submit</button>
+          <a href="attendance.html" class="btn">Back to Attendance</a>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer minimal">
+    <small>&copy; 2025 Attendly</small>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      AttendanceApp.initForm();
+    });
+  </script>
+</body>
+</html>

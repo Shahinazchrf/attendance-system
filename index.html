@@ -1,79 +1,96 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Attendly - Attendance Tracking You'll Love</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="CSS/style.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Attendly — Home</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- ===== Navbar =====-->
-  <header class="navbar">
-    <div class="container">
+  <header class="site-header">
+    <nav class="navbar">
       <div class="brand">
-        <img src="image/Attendly-removebg-preview.png" alt="Attendly Logo" class="logo" />
-        <span class="site-name">Attendly</span>
+        <img src="https://via.placeholder.com/40" alt="Attendly logo" class="logo" />
+        <span class="site-title">Attendly</span>
       </div>
-
-      <nav class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="features.html">Features</a>
-        <a href="faq.html">FAQ</a>
-        <a href="reports.html">Reports</a>
-
-        <div class="dropdown">
-          <button class="dropbtn">More ▾</button>
-          <div class="dropdown-content">
-            <a href="about.html">About Us</a>
-            <a href="contact.html">Contact Us</a>
-          </div>
-        </div>
-
-        <a href="registration.html" class="btn">Register</a>
-        <a href="login.html" class="btn-outline">Login</a>
-      </nav>
-    </div>
+      <button class="nav-toggle" aria-label="Open navigation">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="attendance.html">Attendance List</a></li>
+        <li><a href="add-student.html">Add Student</a></li>
+        <li><a href="#">Reports</a></li>
+        <li><a href="#">Logout</a></li>
+      </ul>
+    </nav>
   </header>
 
-  <!-- ===== Hero Section ===== -->
-  <section class="hero">
-    <div class="hero-content">
-      <h1>Your Smart Way to Manage Attendance</h1>
-      <p>Manage attendance anytime, anywhere — for education and enterprises.</p>
-      <a href="registration.html" class="cta">Get Started</a>
-    </div>
-    <div class="hero-image">
-      <img src="image/staff-attendance-01.png" alt="Attendance Illustration" />
-    </div>
-  </section>
+  <main>
+    <section class="hero">
+      <div class="hero-text">
+        <h1>Your smart attendance system</h1>
+        <p>Manage attendance easily, track participation, and get quick warnings about low attendance — all in a responsive, mobile-first interface.</p>
+        <div class="hero-cta">
+          <a href="attendance.html" class="btn primary">Go to Attendance Table</a>
+          <a href="add-student.html" class="btn">Add a Student</a>
+        </div>
+      </div>
+      <figure class="hero-figure">
+        <img src="https://via.placeholder.com/560x320" alt="Dashboard preview" />
+      </figure>
+    </section>
 
-  <!-- ===== Footer ===== -->
-  <footer class="footer">
-    <div class="footer-container">
-      <div class="footer-section">
-        <h4>Attendly</h4>
-        <p>Smart attendance tracking for schools and businesses.</p>
-      </div>
-      <div class="footer-section">
-        <h4>Quick Links</h4>
+    <section class="info">
+      <h2>Ready-to-use attendance tracking</h2>
+      <p>Whether you’re tracking student participation, employee hours, or volunteer attendance, Attendly helps you log, analyze, and act on presence data.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div>
+        <h4>Product</h4>
         <ul>
-          <li><a href="faq.html">FAQ</a></li>
-          <li><a href="reports.html">Reports</a></li>
-          <li><a href="about.html">About Us</a></li>
-          <li><a href="contact.html">Contact Us</a></li>
+          <li>Overview</li>
+          <li>Solutions</li>
+          <li>Features</li>
         </ul>
       </div>
-      <div class="footer-section">
-        <h4>Follow Us</h4>
+      <div>
+        <h4>Resources</h4>
         <ul>
-          <li><a href="#"><i class="fa-brands fa-facebook"></i>Facebook</a></li>
-          <li><a href="#"><i class="fa-brands fa-linkedin-in"></i>LinkedIn</a></li>
-          <li><a href="#"><i class="fa-brands fa-x-twitter"></i>Twitter</a></li>
+          <li>Help & Learning</li>
+          <li>Template Gallery</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li>About us</li>
+          <li>Careers</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul>
+          <li>Project management templates</li>
+          <li>Support</li>
         </ul>
       </div>
     </div>
-    <p class="footer-bottom">&copy; 2025 Attendly. All rights reserved.</p>
+    <div class="copyright">
+      <small>&copy; 2025 Attendly — Simple responsive attendance system</small>
+    </div>
   </footer>
+
+  <script>
+    // small nav toggle for mobile
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.querySelector('.nav-toggle');
+      const nav = document.querySelector('.nav-links');
+      toggle.addEventListener('click', () => {
+        nav.classList.toggle('open');
+      });
+    });
+  </script>
 </body>
 </html>
