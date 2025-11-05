@@ -1,96 +1,180 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Attendly — Home</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendly — Track</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <header class="site-header">
+    <!-- Navigation -->
     <nav class="navbar">
-      <div class="brand">
-        <img src="https://via.placeholder.com/40" alt="Attendly logo" class="logo" />
-        <span class="site-title">Attendly</span>
-      </div>
-      <button class="nav-toggle" aria-label="Open navigation">☰</button>
-      <ul class="nav-links">
-        <li><a href="index.html" class="active">Home</a></li>
-        <li><a href="attendance.html">Attendance List</a></li>
-        <li><a href="add-student.html">Add Student</a></li>
-        <li><a href="#">Reports</a></li>
-        <li><a href="#">Logout</a></li>
-      </ul>
-    </nav>
-  </header>
-
-  <main>
-    <section class="hero">
-      <div class="hero-text">
-        <h1>Your smart attendance system</h1>
-        <p>Manage attendance easily, track participation, and get quick warnings about low attendance — all in a responsive, mobile-first interface.</p>
-        <div class="hero-cta">
-          <a href="attendance.html" class="btn primary">Go to Attendance Table</a>
-          <a href="add-student.html" class="btn">Add a Student</a>
+        <div class="container nav-container">
+            <div class="nav-logo">
+                <img src="image/attendance.png" alt="Attendly Logo">
+                <h2>Attendly</h2>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link active">Home</a>
+                <a href="add-student.html" class="nav-link">Add Student</a>
+                <a href="attendance-list.html" class="nav-link">Attendance List</a>
+                <a href="registration-login.html" class="nav-link">Registration & Login</a>
+                <div class="nav-dropdown" id="moreDropdown">
+                    <a href="#" class="nav-link">More <i class="fas fa-chevron-down"></i></a>
+                    <div class="dropdown-content">
+                        <a href="about.html">About Us</a>
+                        <a href="faq.html">FAQ</a>
+                        <a href="contact.html">Contact</a>
+                    </div>
+                </div>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+            <div class="theme-toggle">
+                <button id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
         </div>
-      </div>
-      <figure class="hero-figure">
-        <img src="https://via.placeholder.com/560x320" alt="Dashboard preview" />
-      </figure>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="container hero-container">
+            <div class="hero-content">
+                <h1>Attendly — Track. Report. Relax.</h1>
+                <p>Smart attendance tracking that saves you time and gives you reliable reports — no paperwork, no stress.</p>
+                <button class="cta-button" onclick="window.location.href='registration-login.html'">Get Started</button>
+            </div>
+            <div class="hero-image">
+                <img src="image/download.png" alt="Attendly Dashboard">
+            </div>
+        </div>
     </section>
 
-    <section class="info">
-      <h2>Ready-to-use attendance tracking</h2>
-      <p>Whether you’re tracking student participation, employee hours, or volunteer attendance, Attendly helps you log, analyze, and act on presence data.</p>
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Spend more time actually teaching using Attendly</h2>
+                <p>While we built Attendly for school teachers and students initially, the app works perfectly for tracking attendance online for any class, course, or academic group!</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <h3>Student Class Attendance</h3>
+                    <p>Easily track and manage student attendance for all your classes with our intuitive system.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <h3>Teacher Sessions</h3>
+                    <p>Monitor teacher attendance and session schedules to ensure optimal resource allocation.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-laptop"></i>
+                    </div>
+                    <h3>Online Lessons</h3>
+                    <p>Track attendance for virtual classrooms and online learning sessions with ease.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Study Groups</h3>
+                    <p>Manage attendance for study groups and collaborative learning sessions.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>Training Workshops</h3>
+                    <p>Keep track of participant attendance for professional development workshops.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-infinity"></i>
+                    </div>
+                    <h3>And Much More!</h3>
+                    <p>The list goes on and on! Attendly adapts to your specific attendance tracking needs.</p>
+                </div>
+            </div>
+        </div>
     </section>
-  </main>
 
-  <footer class="site-footer">
-    <div class="footer-grid">
-      <div>
-        <h4>Product</h4>
-        <ul>
-          <li>Overview</li>
-          <li>Solutions</li>
-          <li>Features</li>
-        </ul>
-      </div>
-      <div>
-        <h4>Resources</h4>
-        <ul>
-          <li>Help & Learning</li>
-          <li>Template Gallery</li>
-        </ul>
-      </div>
-      <div>
-        <h4>Company</h4>
-        <ul>
-          <li>About us</li>
-          <li>Careers</li>
-        </ul>
-      </div>
-      <div>
-        <h4>Learn</h4>
-        <ul>
-          <li>Project management templates</li>
-          <li>Support</li>
-        </ul>
-      </div>
-    </div>
-    <div class="copyright">
-      <small>&copy; 2025 Attendly — Simple responsive attendance system</small>
-    </div>
-  </footer>
+    <!-- Quote Section -->
+    <section class="quote-section">
+        <div class="container">
+            <blockquote class="fade-in">
+                <p>"Computers are incredibly fast, accurate, and stupid; humans are incredibly slow, inaccurate, and brilliant. Together they are powerful."</p>
+                <footer>– Albert Einstein</footer>
+            </blockquote>
+        </div>
+    </section>
 
-  <script>
-    // small nav toggle for mobile
-    document.addEventListener('DOMContentLoaded', () => {
-      const toggle = document.querySelector('.nav-toggle');
-      const nav = document.querySelector('.nav-links');
-      toggle.addEventListener('click', () => {
-        nav.classList.toggle('open');
-      });
-    });
-  </script>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <h3>Attendly — Track.com</h3>
+                        <span>A practical project for Algiers University</span>
+                    </div>
+                    <p>Simplify attendance tracking for teachers, trainers, and organizers.</p>
+                    <div class="contact-info">
+                        <a href="mailto:chahinaz.cherfi@univ-alger.dz">
+                            <i class="fas fa-envelope"></i>
+                            chahinaz.cherfi@univ-alger.dz
+                        </a>
+                    </div>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/_.shahy?igsh=bmpyYXprZnQwdmdq"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.facebook.com/chocho.chahi.3979"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.linkedin.com/in/shahinaz-cherfi-965005349?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://discord.com/users/1237125745332064389"><i class="fa-brands fa-discord"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Site Map</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="attendance-list.html">Attendance List</a></li>
+                        <li><a href="add-student.html">Add Student</a></li>
+                        <li><a href="reports.html">Reports</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="help-center.html">Help Center</a></li>
+                        <li><a href="support.html">Support</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <p>© 2025 Attendly — Track.com — All rights reserved.</p>
+                    <p>Algiers University Project</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>Attendly — Track.com</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
