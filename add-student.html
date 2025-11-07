@@ -1,74 +1,335 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Attendly — Add Student</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Student - Attendly</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <header class="site-header">
+    <!-- Navigation -->
     <nav class="navbar">
-      <div class="brand">
-        <img src="https://via.placeholder.com/40" alt="Attendly logo" class="logo" />
-        <span class="site-title">Attendly</span>
-      </div>
-      <button class="nav-toggle" aria-label="Open navigation">☰</button>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="attendance.html">Attendance List</a></li>
-        <li><a href="add-student.html" class="active">Add Student</a></li>
-        <li><a href="#">Reports</a></li>
-        <li><a href="#">Logout</a></li>
-      </ul>
-    </nav>
-  </header>
-
-  <main class="page-container">
-    <section class="panel small-form">
-      <h1>Add Student</h1>
-      <form id="add-student-form" novalidate>
-        <label>
-          Student ID
-          <input type="text" id="student-id" name="studentId" inputmode="numeric" />
-          <small class="error" id="err-id"></small>
-        </label>
-
-        <label>
-          Last Name
-          <input type="text" id="last-name" name="lastName" />
-          <small class="error" id="err-last"></small>
-        </label>
-
-        <label>
-          First Name
-          <input type="text" id="first-name" name="firstName" />
-          <small class="error" id="err-first"></small>
-        </label>
-
-        <label>
-          Email
-          <input type="email" id="email" name="email" />
-          <small class="error" id="err-email"></small>
-        </label>
-
-        <div class="form-actions">
-          <button type="submit" class="btn primary">Submit</button>
-          <a href="attendance.html" class="btn">Back to Attendance</a>
+        <div class="container nav-container">
+            <div class="nav-logo">
+                <img src="image/attendance.png" alt="Attendly Logo">
+                <h2>Attendly</h2>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="add-student.html" class="nav-link active">Add Student</a>
+                <a href="attendance-list.html" class="nav-link">Attendance List</a>
+                <a href="registration-login.html" class="nav-link">Registration & Login</a>
+                <div class="nav-dropdown" id="moreDropdown">
+                    <a href="#" class="nav-link">More <i class="fas fa-chevron-down"></i></a>
+                    <div class="dropdown-content">
+                        <a href="about.html">About Us</a>
+                        <a href="faq.html">FAQ</a>
+                        <a href="contact.html">Contact</a>
+                    </div>
+                </div>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+            <div class="theme-toggle">
+                <button id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
         </div>
-      </form>
-    </section>
-  </main>
+    </nav>
 
-  <footer class="site-footer minimal">
-    <small>&copy; 2025 Attendly</small>
-  </footer>
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <div class="container">
+            <div class="dashboard-container">
+                <!-- Sidebar -->
+                <aside class="sidebar">
+                    <div class="sidebar-header">
+                        <h3>Dashboard</h3>
+                    </div>
+                    <nav class="sidebar-nav">
+                        <div class="nav-section">
+                            <h4>Data</h4>
+                            <ul>
+                                <li>
+                                    <a href="dashboard.html" class="nav-item">
+                                        <i class="fas fa-tachometer-alt"></i>
+                                        <span>Dashboard</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="nav-item upgrade">
+                                        <i class="fas fa-crown"></i>
+                                        <span>Standard Account</span>
+                                        <small>Upgrade Now!</small>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="nav-item">
+                                        <i class="fas fa-newspaper"></i>
+                                        <span>Release Notes</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="nav-section">
+                            <h4>ATTENDANCE</h4>
+                            <ul>
+                                <li>
+                                    <a href="take-attendance.html" class="nav-item">
+                                        <i class="fas fa-clipboard-check"></i>
+                                        <span>Take Attendance</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="nav-section">
+                            <h4>MANAGEMENT</h4>
+                            <ul>
+                                <li class="nav-parent">
+                                    <a href="#" class="nav-item">
+                                        <i class="fas fa-users"></i>
+                                        <span>Students</span>
+                                        <i class="fas fa-chevron-down"></i>
+                                    </a>
+                                    <ul class="nav-submenu">
+                                        <li>
+                                            <a href="student-list.html" class="nav-item">
+                                                <i class="fas fa-list"></i>
+                                                <span>Student List</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="add-student.html" class="nav-item active">
+                                                <i class="fas fa-user-plus"></i>
+                                                <span>Add Student</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="classes.html" class="nav-item">
+                                        <i class="fas fa-chalkboard"></i>
+                                        <span>Classes</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="grades.html" class="nav-item">
+                                        <i class="fas fa-graduation-cap"></i>
+                                        <span>Grades</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="parents.html" class="nav-item">
+                                        <i class="fas fa-user-friends"></i>
+                                        <span>Parents</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="users.html" class="nav-item">
+                                        <i class="fas fa-user-cog"></i>
+                                        <span>Users</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                </aside>
 
-  <script src="script.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      AttendanceApp.initForm();
-    });
-  </script>
+                <!-- Main Content Area -->
+                <div class="main-content">
+                    <div class="content-header">
+                        <h1>Add Student</h1>
+                        <div class="breadcrumb">
+                            <a href="dashboard.html">Dashboard</a>
+                            <span>/</span>
+                            <a href="student-list.html">Students</a>
+                            <span>/</span>
+                            <span>Add Student</span>
+                        </div>
+                    </div>
+
+                    <div class="student-form-container">
+                        <div class="form-section">
+                            <h2>STUDENT DETAILS</h2>
+                            
+                            <form id="addStudentForm">
+                                <!-- Personal Information -->
+                                <div class="form-group-row">
+                                    <div class="form-group">
+                                        <label for="firstName">First Name *</label>
+                                        <input type="text" id="firstName" name="firstName" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="lastName">Last Name *</label>
+                                        <input type="text" id="lastName" name="lastName" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="email">Email Address</label>
+                                    <input type="email" id="email" name="email">
+                                </div>
+
+                                <div class="form-group-row">
+                                    <div class="form-group">
+                                        <label for="homePhone">Home Phone</label>
+                                        <input type="tel" id="homePhone" name="homePhone">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="mobilePhone">Mobile Phone</label>
+                                        <input type="tel" id="mobilePhone" name="mobilePhone">
+                                    </div>
+                                </div>
+
+                                <!-- Address Information -->
+                                <div class="form-section-divider">
+                                    <h3>Address</h3>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="streetAddress">Street Address</label>
+                                    <input type="text" id="streetAddress" name="streetAddress">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="addressLine2">Address Line 2</label>
+                                    <input type="text" id="addressLine2" name="addressLine2">
+                                </div>
+
+                                <div class="form-group-row">
+                                    <div class="form-group">
+                                        <label for="city">City</label>
+                                        <input type="text" id="city" name="city">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="state">State</label>
+                                        <select id="state" name="state">
+                                            <option value="">Select State</option>
+                                            <option value="AL">Alabama</option>
+                                            <option value="AK">Alaska</option>
+                                            <option value="AZ">Arizona</option>
+                                            <!-- Add more states as needed -->
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="zipCode">Zip Code</label>
+                                        <input type="text" id="zipCode" name="zipCode">
+                                    </div>
+                                </div>
+
+                                <!-- Bio/Notes -->
+                                <div class="form-group">
+                                    <label for="bioNotes">Bio/Notes</label>
+                                    <textarea id="bioNotes" name="bioNotes" rows="4" placeholder="Add any additional notes or information about the student..."></textarea>
+                                </div>
+
+                                <!-- Classes Selection -->
+                                <div class="form-section-divider">
+                                    <h3>Add to Classes</h3>
+                                </div>
+
+                                <div class="classes-selection">
+                                    <div class="classes-list">
+                                        <div class="class-checkbox">
+                                            <input type="checkbox" id="class1" name="classes" value="math101">
+                                            <label for="class1">Mathematics 101</label>
+                                        </div>
+                                        <div class="class-checkbox">
+                                            <input type="checkbox" id="class2" name="classes" value="science101">
+                                            <label for="class2">Science 101</label>
+                                        </div>
+                                        <div class="class-checkbox">
+                                            <input type="checkbox" id="class3" name="classes" value="english101">
+                                            <label for="class3">English 101</label>
+                                        </div>
+                                        <div class="class-checkbox">
+                                            <input type="checkbox" id="class4" name="classes" value="history101">
+                                            <label for="class4">History 101</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Form Actions -->
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-secondary" id="saveAndAddAnother">
+                                        <i class="fas fa-plus-circle"></i>
+                                        Save & Add Another
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i>
+                                        Save Student
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <h3>Attendly — Track.com</h3>
+                        <span>A practical project for Algiers University</span>
+                    </div>
+                    <p>Simplify attendance tracking for teachers, trainers, and organizers.</p>
+                    <div class="contact-info">
+                        <a href="mailto:chahinaz.cherfi@univ-alger.dz">
+                            <i class="fas fa-envelope"></i>
+                            chahinaz.cherfi@univ-alger.dz
+                        </a>
+                    </div>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/_.shahy?igsh=bmpyYXprZnQwdmdq"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.facebook.com/chocho.chahi.3979"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.linkedin.com/in/shahinaz-cherfi-965005349?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://discord.com/users/1237125745332064389"><i class="fa-brands fa-discord"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Site Map</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="attendance-list.html">Attendance List</a></li>
+                        <li><a href="add-student.html">Add Student</a></li>
+                        <li><a href="reports.html">Reports</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="help-center.html">Help Center</a></li>
+                        <li><a href="support.html">Support</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <p>© 2025 Attendly — Track.com — All rights reserved.</p>
+                    <p>Algiers University Project</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>Attendly — Track.com</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="add-student.js"></script>
 </body>
 </html>

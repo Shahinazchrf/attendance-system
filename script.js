@@ -148,3 +148,7 @@ function setActivePage() {
 
 // Set active page on load
 window.addEventListener('DOMContentLoaded', setActivePage);
+
+
+//*****************LOG IN AND REGISTRATION*******************
+
