@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Student - Attendly</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <!-- Navigation -->
@@ -16,8 +16,8 @@
                 <h2>Attendly</h2>
             </div>
             <div class="nav-menu" id="navMenu">
-                <a href="index.html" class="nav-link">Home</a>
-                <a href="add-student.html" class="nav-link active">Add Student</a>
+                <a href="index.html" class="nav-link active">Home</a>
+                <a href="add-student.html" class="nav-link">Add Student</a>
                 <a href="attendance-list.html" class="nav-link">Attendance List</a>
                 <a href="registration-login.html" class="nav-link">Registration & Login</a>
                 <div class="nav-dropdown" id="moreDropdown">
@@ -43,233 +43,162 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="dashboard-main">
-        <div class="container">
-            <div class="dashboard-container">
-                <!-- Sidebar -->
-                <aside class="sidebar">
-                    <div class="sidebar-header">
-                        <h3>Dashboard</h3>
-                    </div>
-                    <nav class="sidebar-nav">
-                        <div class="nav-section">
-                            <h4>Data</h4>
-                            <ul>
-                                <li>
-                                    <a href="dashboard.html" class="nav-item">
-                                        <i class="fas fa-tachometer-alt"></i>
-                                        <span>Dashboard</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="nav-item upgrade">
-                                        <i class="fas fa-crown"></i>
-                                        <span>Standard Account</span>
-                                        <small>Upgrade Now!</small>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="nav-item">
-                                        <i class="fas fa-newspaper"></i>
-                                        <span>Release Notes</span>
-                                    </a>
-                                </li>
-                            </ul>
+    <main class="main-content">
+        <div class="form-container">
+            <div class="form-header">
+                <h1>Add Student</h1>
+                <p>Fill in the student information to add them to the system</p>
+            </div>
+            
+            <div class="form-body">
+                <!-- Student Details -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-user-graduate"></i>
+                        STUDENT DETAILS
+                    </h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="matricule">Student ID *</label>
+                                <input type="text" id="matricule" class="form-control" placeholder="Student ID" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="firstName">First Name *</label>
+                                <input type="text" id="firstName" class="form-control" placeholder="First Name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name *</label>
+                                <input type="text" id="lastName" class="form-control" placeholder="Last Name" required>
+                            </div>
                         </div>
-                        
-                        <div class="nav-section">
-                            <h4>ATTENDANCE</h4>
-                            <ul>
-                                <li>
-                                    <a href="take-attendance.html" class="nav-item">
-                                        <i class="fas fa-clipboard-check"></i>
-                                        <span>Take Attendance</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        
-                        <div class="nav-section">
-                            <h4>MANAGEMENT</h4>
-                            <ul>
-                                <li class="nav-parent">
-                                    <a href="#" class="nav-item">
-                                        <i class="fas fa-users"></i>
-                                        <span>Students</span>
-                                        <i class="fas fa-chevron-down"></i>
-                                    </a>
-                                    <ul class="nav-submenu">
-                                        <li>
-                                            <a href="student-list.html" class="nav-item">
-                                                <i class="fas fa-list"></i>
-                                                <span>Student List</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="add-student.html" class="nav-item active">
-                                                <i class="fas fa-user-plus"></i>
-                                                <span>Add Student</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <a href="classes.html" class="nav-item">
-                                        <i class="fas fa-chalkboard"></i>
-                                        <span>Classes</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="grades.html" class="nav-item">
-                                        <i class="fas fa-graduation-cap"></i>
-                                        <span>Grades</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="parents.html" class="nav-item">
-                                        <i class="fas fa-user-friends"></i>
-                                        <span>Parents</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="users.html" class="nav-item">
-                                        <i class="fas fa-user-cog"></i>
-                                        <span>Users</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </nav>
-                </aside>
 
-                <!-- Main Content Area -->
-                <div class="main-content">
-                    <div class="content-header">
-                        <h1>Add Student</h1>
-                        <div class="breadcrumb">
-                            <a href="dashboard.html">Dashboard</a>
-                            <span>/</span>
-                            <a href="student-list.html">Students</a>
-                            <span>/</span>
-                            <span>Add Student</span>
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" class="form-control" placeholder="email@example.com" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="homePhone">Home Phone</label>
+                                <input type="tel" id="homePhone" class="form-control" placeholder="(123) 456-7890">
+                            </div>
+                            <div class="form-group">
+                                <label for="mobilePhone">Mobile Phone *</label>
+                                <input type="tel" id="mobilePhone" class="form-control" placeholder="(123) 456-7890" required>
+                            </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="student-form-container">
-                        <div class="form-section">
-                            <h2>STUDENT DETAILS</h2>
-                            
-                            <form id="addStudentForm">
-                                <!-- Personal Information -->
-                                <div class="form-group-row">
-                                    <div class="form-group">
-                                        <label for="firstName">First Name *</label>
-                                        <input type="text" id="firstName" name="firstName" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="lastName">Last Name *</label>
-                                        <input type="text" id="lastName" name="lastName" required>
-                                    </div>
-                                </div>
+                <!-- Academic Information -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-graduation-cap"></i>
+                        ACADEMIC INFORMATION
+                    </h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="year">Academic Year *</label>
+                                <select id="year" class="form-control" required>
+                                    <option value="">Select Academic Year</option>
+                                    <option value="1A">1st Year</option>
+                                    <option value="2A">2nd Year</option>
+                                    <option value="3A">3rd Year</option>
+                                    <option value="4A">4th Year</option>
+                                    <option value="5A">5th Year</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="department">Department *</label>
+                                <select id="department" class="form-control" required>
+                                    <option value="">Select Department</option>
+                                    <option value="computer_science">Computer Science</option>
+                                    <option value="snv">SNV (Natural and Life Sciences)</option>
+                                    <option value="architecture">Architecture</option>
+                                    <option value="mathematics">Mathematics</option>
+                                    <option value="sm">SM (Materials Science)</option>
+                                </select>
+                            </div>
+                        </div>
 
-                                <div class="form-group">
-                                    <label for="email">Email Address</label>
-                                    <input type="email" id="email" name="email">
-                                </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="level">Level *</label>
+                                <select id="level" class="form-control" required>
+                                    <option value="">Select Level</option>
+                                    <!-- Options will be populated based on department selection -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="specialty">Specialty</label>
+                                <select id="specialty" class="form-control">
+                                    <option value="">Select Specialty</option>
+                                    <!-- Options will be populated based on level selection -->
+                                </select>
+                            </div>
+                        </div>
 
-                                <div class="form-group-row">
-                                    <div class="form-group">
-                                        <label for="homePhone">Home Phone</label>
-                                        <input type="tel" id="homePhone" name="homePhone">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="mobilePhone">Mobile Phone</label>
-                                        <input type="tel" id="mobilePhone" name="mobilePhone">
-                                    </div>
-                                </div>
-
-                                <!-- Address Information -->
-                                <div class="form-section-divider">
-                                    <h3>Address</h3>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="streetAddress">Street Address</label>
-                                    <input type="text" id="streetAddress" name="streetAddress">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="addressLine2">Address Line 2</label>
-                                    <input type="text" id="addressLine2" name="addressLine2">
-                                </div>
-
-                                <div class="form-group-row">
-                                    <div class="form-group">
-                                        <label for="city">City</label>
-                                        <input type="text" id="city" name="city">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="state">State</label>
-                                        <select id="state" name="state">
-                                            <option value="">Select State</option>
-                                            <option value="AL">Alabama</option>
-                                            <option value="AK">Alaska</option>
-                                            <option value="AZ">Arizona</option>
-                                            <!-- Add more states as needed -->
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="zipCode">Zip Code</label>
-                                        <input type="text" id="zipCode" name="zipCode">
-                                    </div>
-                                </div>
-
-                                <!-- Bio/Notes -->
-                                <div class="form-group">
-                                    <label for="bioNotes">Bio/Notes</label>
-                                    <textarea id="bioNotes" name="bioNotes" rows="4" placeholder="Add any additional notes or information about the student..."></textarea>
-                                </div>
-
-                                <!-- Classes Selection -->
-                                <div class="form-section-divider">
-                                    <h3>Add to Classes</h3>
-                                </div>
-
-                                <div class="classes-selection">
-                                    <div class="classes-list">
-                                        <div class="class-checkbox">
-                                            <input type="checkbox" id="class1" name="classes" value="math101">
-                                            <label for="class1">Mathematics 101</label>
-                                        </div>
-                                        <div class="class-checkbox">
-                                            <input type="checkbox" id="class2" name="classes" value="science101">
-                                            <label for="class2">Science 101</label>
-                                        </div>
-                                        <div class="class-checkbox">
-                                            <input type="checkbox" id="class3" name="classes" value="english101">
-                                            <label for="class3">English 101</label>
-                                        </div>
-                                        <div class="class-checkbox">
-                                            <input type="checkbox" id="class4" name="classes" value="history101">
-                                            <label for="class4">History 101</label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Form Actions -->
-                                <div class="form-actions">
-                                    <button type="button" class="btn btn-secondary" id="saveAndAddAnother">
-                                        <i class="fas fa-plus-circle"></i>
-                                        Save & Add Another
-                                    </button>
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-save"></i>
-                                        Save Student
-                                    </button>
-                                </div>
-                            </form>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="section">Section</label>
+                                <select id="section" class="form-control">
+                                    <option value="">Select Section</option>
+                                    <option value="A">Section A</option>
+                                    <option value="B">Section B</option>
+                                    <option value="C">Section C</option>
+                                    <option value="D">Section D</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="group">Group</label>
+                                <select id="group" class="form-control">
+                                    <option value="">Select Group</option>
+                                    <option value="G1">Group 1</option>
+                                    <option value="G2">Group 2</option>
+                                    <option value="G3">Group 3</option>
+                                    <option value="G4">Group 4</option>
+                                    <option value="G5">Group 5</option>
+                                    <option value="G6">Group 6</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Additional Information -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-info-circle"></i>
+                        ADDITIONAL INFORMATION
+                    </h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="bioNotes">Notes / Observations</label>
+                            <textarea id="bioNotes" class="form-control" rows="4" placeholder="Additional notes about the student..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-accent" id="saveBtn">
+                        <i class="fas fa-save"></i>
+                        Save
+                    </button>
+                    <button type="button" class="btn" id="saveAddAnotherBtn">
+                        <i class="fas fa-save"></i>
+                        <i class="fas fa-plus"></i>
+                        Save & Add Another
+                    </button>
+                    <button type="button" class="btn btn-outline" id="cancelBtn">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
                 </div>
             </div>
         </div>
