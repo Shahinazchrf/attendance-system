@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Student - Attendly</title>
+    <title>Reports - Attendly</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -22,10 +22,10 @@
                     <a href="attendance.html" class="nav-link"><i class="fas fa-list"></i> Attendance List</a>
                 </li>
                 <li class="nav-item">
-                    <a href="add-student.html" class="nav-link active"><i class="fas fa-user-plus"></i> Add Student</a>
+                    <a href="add-student.html" class="nav-link"><i class="fas fa-user-plus"></i> Add Student</a>
                 </li>
                 <li class="nav-item">
-                    <a href="reports.html" class="nav-link"><i class="fas fa-chart-bar"></i> Reports</a>
+                    <a href="reports.html" class="nav-link active"><i class="fas fa-chart-bar"></i> Reports</a>
                 </li>
             </ul>
             <div class="hamburger">
@@ -36,53 +36,58 @@
         </div>
     </nav>
 
-    <!-- Add Student Form -->
-    <section id="add-student" class="section">
+    <!-- Reports Section -->
+    <section id="reports" class="section">
         <div class="container">
-            <h2><i class="fas fa-user-plus"></i> Add New Student</h2>
-            <form id="student-form">
-                <div class="form-group">
-                    <label for="student-id"><i class="fas fa-id-card"></i> Student ID:</label>
-                    <input type="text" id="student-id" name="student-id">
-                    <span class="error-message" id="student-id-error"></span>
+            <h2><i class="fas fa-chart-bar"></i> Reports</h2>
+            
+            <!-- Pie Chart Section -->
+            <div class="report-info">
+                <h3><i class="fas fa-chart-pie"></i> Attendance Statistics</h3>
+                <div class="pie-chart-container">
+                    <div class="pie-chart">
+                        <div class="pie-center">Students</div>
+                    </div>
                 </div>
-                
-                <div class="form-group">
-                    <label for="last-name"><i class="fas fa-user"></i> Last Name:</label>
-                    <input type="text" id="last-name" name="last-name">
-                    <span class="error-message" id="last-name-error"></span>
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #27ae60;"></div>
+                        <span>Excellent: 1 (33%)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #3498db;"></div>
+                        <span>Good: 0 (0%)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #f39c12;"></div>
+                        <span>Average: 2 (67%)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #e74c3c;"></div>
+                        <span>Poor: 0 (0%)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #95a5a6;"></div>
+                        <span>No Data: 0</span>
+                    </div>
                 </div>
-                
-                <div class="form-group">
-                    <label for="first-name"><i class="fas fa-user"></i> First Name:</label>
-                    <input type="text" id="first-name" name="first-name">
-                    <span class="error-message" id="first-name-error"></span>
-                </div>
-                
-                <div class="form-group">
-                    <label for="email"><i class="fas fa-envelope"></i> Email:</label>
-                    <input type="text" id="email" name="email">
-                    <span class="error-message" id="email-error"></span>
-                </div>
-                
-                <div class="form-group">
-                    <label for="course"><i class="fas fa-book"></i> Course:</label>
-                    <select id="course" name="course">
-                        <option value="">Select a course</option>
-                        <option value="Computer Science">Computer Science</option>
-                        <option value="Mathematics">Mathematics</option>
-                        <option value="Physics">Physics</option>
-                        <option value="Chemistry">Chemistry</option>
-                        <option value="Biology">Biology</option>
-                    </select>
-                </div>
-                
-                <button type="submit" class="btn btn-effect btn-submit">
-                    <span class="btn-text">Add Student</span>
-                    <span class="btn-icon"><i class="fas fa-plus-circle"></i></span>
+            </div>
+
+            <!-- Report Actions -->
+            <div class="button-group">
+                <button class="btn btn-effect">
+                    <span class="btn-text">Generate PDF Report</span>
+                    <span class="btn-icon"><i class="fas fa-file-pdf"></i></span>
                 </button>
-            </form>
-            <div id="confirmation-message" class="confirmation" style="display: none;"></div>
+                <button class="btn btn-effect">
+                    <span class="btn-text">Export to Excel</span>
+                    <span class="btn-icon"><i class="fas fa-file-excel"></i></span>
+                </button>
+                <button class="btn btn-effect">
+                    <span class="btn-text">Print Report</span>
+                    <span class="btn-icon"><i class="fas fa-print"></i></span>
+                </button>
+            </div>
         </div>
     </section>
 

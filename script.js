@@ -1,542 +1,451 @@
-// Toggle mobile navigation
-const navToggle = document.getElementById('navToggle');
-const navMenu = document.getElementById('navMenu');
-const moreDropdown = document.getElementById('moreDropdown');
-
-if (navToggle && navMenu) {
-    navToggle.addEventListener('click', (e) => {
-        e.stopPropagation();
-        navMenu.classList.toggle('active');
-        navToggle.classList.toggle('active');
-        
-        // Fermer le dropdown "More" quand on ouvre/ferme le menu mobile
-        if (window.innerWidth <= 768) {
-            moreDropdown.classList.remove('active');
-        }
-    });
-}
-
-// Gestion du dropdown "More" en mobile
-if (moreDropdown) {
-    const moreLink = moreDropdown.querySelector('.nav-link');
-    
-    moreLink.addEventListener('click', (e) => {
-        if (window.innerWidth <= 768) {
-            e.preventDefault();
-            e.stopPropagation();
-            moreDropdown.classList.toggle('active');
-        }
-    });
-}
-
-// Fermer le menu mobile quand on clique en dehors
-document.addEventListener('click', (e) => {
-    if (navMenu.classList.contains('active') && 
-        !navMenu.contains(e.target) && 
-        !navToggle.contains(e.target)) {
-        navMenu.classList.remove('active');
-        navToggle.classList.remove('active');
-    }
-});
-
-// Fermer le menu mobile quand on clique sur un lien
-document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', () => {
-        if (window.innerWidth <= 768) {
-            navMenu.classList.remove('active');
-            navToggle.classList.remove('active');
-        }
-    });
-});
-
-// Dark mode toggle
-const themeToggle = document.getElementById('themeToggle');
-let themeIcon = null;
-
-if (themeToggle) {
-    themeIcon = themeToggle.querySelector('i');
-    
-    themeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-        
-        if (document.body.classList.contains('dark-mode')) {
-            themeIcon.classList.remove('fa-moon');
-            themeIcon.classList.add('fa-sun');
-        } else {
-            themeIcon.classList.remove('fa-sun');
-            themeIcon.classList.add('fa-moon');
-        }
-        
-        // Sauvegarder la préférence dans localStorage
-        const isDarkMode = document.body.classList.contains('dark-mode');
-        localStorage.setItem('darkMode', isDarkMode);
-    });
-}
-
-// Vérifier la préférence de thème sauvegardée
-document.addEventListener('DOMContentLoaded', () => {
-    if (themeToggle && themeIcon) {
-        const savedDarkMode = localStorage.getItem('darkMode') === 'true';
-        
-        if (savedDarkMode) {
-            document.body.classList.add('dark-mode');
-            themeIcon.classList.remove('fa-moon');
-            themeIcon.classList.add('fa-sun');
-        }
-    }
-});
-
-// Scroll animations
-const fadeElements = document.querySelectorAll('.fade-in');
-
-const fadeInOnScroll = () => {
-    fadeElements.forEach(element => {
-        const elementTop = element.getBoundingClientRect().top;
-        const elementVisible = 150;
-        
-        if (elementTop < window.innerHeight - elementVisible) {
-            element.classList.add('visible');
-        }
-    });
-};
-
-window.addEventListener('scroll', fadeInOnScroll);
-window.addEventListener('load', fadeInOnScroll);
-
-// Get Started button functionality
-const ctaButton = document.querySelector('.cta-button');
-if (ctaButton) {
-    ctaButton.addEventListener('click', function() {
-        window.location.href = 'registration-login.html';
-    });
-}
-
-// Gestion du redimensionnement de la fenêtre
-window.addEventListener('resize', () => {
-    if (window.innerWidth > 768) {
-        if (navMenu) navMenu.classList.remove('active');
-        if (navToggle) navToggle.classList.remove('active');
-        if (moreDropdown) moreDropdown.classList.remove('active');
-    }
-});
-
-// Highlight active page in navigation
-function setActivePage() {
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    const navLinks = document.querySelectorAll('.nav-link');
-    
-    navLinks.forEach(link => {
-        const linkHref = link.getAttribute('href');
-        if (linkHref === currentPage) {
-            link.classList.add('active');
-        } else {
-            link.classList.remove('active');
-        }
-    });
-}
-
-// Set active page on load
-document.addEventListener('DOMContentLoaded', setActivePage);
-
-//*****************LOG IN AND REGISTRATION*******************
-
-// Attendre que le DOM soit complètement chargé
-document.addEventListener('DOMContentLoaded', function() {
-    // Gestion des onglets de connexion/inscription
-    const authTabs = document.querySelectorAll('.auth-tab');
-    const authForms = document.querySelectorAll('.auth-form');
-
-    // Vérifier si on est sur la page login/signup
-    if (authTabs.length > 0 && authForms.length > 0) {
-        console.log('Initialisation de la page login/signup');
-        
-        // Initialiser l'onglet actif
-        const activeTab = document.querySelector('.auth-tab.active');
-        if (!activeTab && authTabs.length > 0) {
-            authTabs[0].classList.add('active');
-        }
-        
-        const activeForm = document.querySelector('.auth-form.active');
-        if (!activeForm && authForms.length > 0) {
-            authForms[0].classList.add('active');
-        }
-
-        authTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabId = tab.getAttribute('data-tab');
-                console.log('Changement d\'onglet vers:', tabId);
-                
-                // Activer l'onglet sélectionné
-                authTabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                
-                // Afficher le formulaire correspondant
-                authForms.forEach(form => {
-                    form.classList.remove('active');
-                    if (form.id === `${tabId}Form`) {
-                        form.classList.add('active');
-                    }
-                });
-            });
-        });
-
-        // Basculer entre connexion et inscription
-        const switchToLogin = document.getElementById('switchToLogin');
-        if (switchToLogin) {
-            switchToLogin.addEventListener('click', (e) => {
-                e.preventDefault();
-                console.log('Switch to login clicked');
-                // Activer l'onglet login
-                authTabs[0].click();
-            });
-        }
-
-        // Sélection du type d'utilisateur
-        const userTypes = document.querySelectorAll('.user-type');
-        let selectedUserType = 'student';
-
-        if (userTypes.length > 0) {
-            userTypes.forEach(type => {
-                type.addEventListener('click', () => {
-                    userTypes.forEach(t => t.classList.remove('selected'));
-                    type.classList.add('selected');
-                    selectedUserType = type.getAttribute('data-type');
-                    console.log('Type d\'utilisateur sélectionné:', selectedUserType);
-                });
-            });
-
-            // Sélectionner "Étudiant" par défaut
-            const hasSelected = document.querySelector('.user-type.selected');
-            if (!hasSelected) {
-                userTypes[0].classList.add('selected');
-            }
-        }
-
-        // Gestion de la soumission du formulaire de connexion
-        const loginForm = document.getElementById('loginForm');
-        if (loginForm) {
-            loginForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                
-                const email = document.getElementById('loginEmail').value;
-                const password = document.getElementById('loginPassword').value;
-                
-                console.log(`Tentative de connexion en tant que ${selectedUserType} avec l'email: ${email}`);
-                
-                // Simulation de connexion
-                alert(`Connexion réussie en tant que ${selectedUserType}!`);
-                
-                // Redirection selon le type d'utilisateur
-                switch(selectedUserType) {
-                    case 'student':
-                        window.location.href = 'student-dashboard.html';
-                        break;
-                    case 'professor':
-                        window.location.href = 'professor-dashboard.html';
-                        break;
-                    case 'department':
-                        window.location.href = 'department-dashboard.html';
-                        break;
-                    default:
-                        window.location.href = 'student-dashboard.html';
-                }
-            });
-        }
-
-        // Gestion de la soumission du formulaire d'inscription
-        const signupForm = document.getElementById('signupForm');
-        if (signupForm) {
-            signupForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                
-                const firstName = document.getElementById('firstName').value;
-                const lastName = document.getElementById('lastName').value;
-                const email = document.getElementById('signupEmail').value;
-                const password = document.getElementById('signupPassword').value;
-                const confirmPassword = document.getElementById('confirmPassword').value;
-                
-                console.log(`Tentative d'inscription en tant que ${selectedUserType}`);
-                
-                // Vérification des mots de passe
-                if (password !== confirmPassword) {
-                    alert('Les mots de passe ne correspondent pas');
-                    return;
-                }
-                
-                // Vérifier les termes
-                const acceptTerms = document.getElementById('acceptTerms');
-                if (!acceptTerms.checked) {
-                    alert('Veuillez accepter les conditions d\'utilisation');
-                    return;
-                }
-                
-                // Génération du QR Code pour les étudiants
-                if (selectedUserType === 'student') {
-                    console.log('Génération du QR Code pour étudiant');
-                    generateQRCode(email, firstName, lastName);
-                    const qrModal = document.getElementById('qrModal');
-                    if (qrModal) {
-                        qrModal.classList.add('active');
-                    }
-                } else {
-                    alert(`Inscription réussie en tant que ${selectedUserType}!`);
-                    // Redirection selon le type d'utilisateur
-                    switch(selectedUserType) {
-                        case 'professor':
-                            window.location.href = 'professor-dashboard.html';
-                            break;
-                        case 'department':
-                            window.location.href = 'department-dashboard.html';
-                            break;
-                    }
-                }
-            });
-        }
-
-        // Génération du QR Code
-        function generateQRCode(email, firstName, lastName) {
-            const qrData = JSON.stringify({
-                type: 'student',
-                email: email,
-                name: `${firstName} ${lastName}`,
-                id: Math.random().toString(36).substring(2, 10).toUpperCase(),
-                timestamp: new Date().toISOString()
-            });
-            
-            const qrCanvas = document.getElementById('qrCode');
-            if (qrCanvas && typeof QRCode !== 'undefined') {
-                QRCode.toCanvas(qrCanvas, qrData, {
-                    width: 200,
-                    margin: 2,
-                    color: {
-                        dark: '#2563eb',
-                        light: '#ffffff'
-                    }
-                }, function (error) {
-                    if (error) {
-                        console.error('Erreur génération QR Code:', error);
-                        alert('Erreur lors de la génération du QR Code');
-                    } else {
-                        console.log('QR Code généré avec succès');
-                    }
-                });
-            } else {
-                console.error('Canvas QR Code non trouvé ou librairie QRCode non chargée');
-                alert('Erreur: Impossible de générer le QR Code');
-            }
-        }
-
-        // Fermeture de la modal QR Code
-        const closeModal = document.getElementById('closeModal');
-        if (closeModal) {
-            closeModal.addEventListener('click', () => {
-                const qrModal = document.getElementById('qrModal');
-                if (qrModal) {
-                    qrModal.classList.remove('active');
-                    // Redirection vers le tableau de bord étudiant
-                    window.location.href = 'student-dashboard.html';
-                }
-            });
-        }
-
-        // Renvoyer le QR Code par email
-        const sendEmail = document.getElementById('sendEmail');
-        if (sendEmail) {
-            sendEmail.addEventListener('click', () => {
-                alert('QR Code renvoyé à votre adresse email!');
-            });
-        }
-
-        // Mot de passe oublié
-        const forgotPassword = document.getElementById('forgotPassword');
-        if (forgotPassword) {
-            forgotPassword.addEventListener('click', (e) => {
-                e.preventDefault();
-                alert('Un lien de réinitialisation a été envoyé à votre adresse email.');
-            });
-        }
-    }
-});
-
-
-//******************** ADD STUDENT**************************/
-// Department and level configuration
-const departmentLevels = {
-    'computer_science': {
-        'L1': ['General'],
-        'L2': ['General'],
-        'L3': ['ISIL', 'SI'],
-        'M1': ['ASD', 'ISII', 'RES'],
-        'M2': ['ASD', 'ISII', 'RES']
+// Sample student data
+let students = [
+    {
+        id: "001",
+        lastName: "Ahmed",
+        firstName: "Sara",
+        course: "Computer Science",
+        email: "sara.ahmed@student.univ-alger.dz",
+        sessions: [
+            { present: true, participated: true },
+            { present: false, participated: false },
+            { present: false, participated: false },
+            { present: false, participated: false },
+            { present: false, participated: false },
+            { present: false, participated: false }
+        ]
     },
-    'snv': {
-        'L1': ['General'],
-        'L2': ['General'],
-        'L3': ['Biology', 'Biochemistry', 'Geology'],
-        'M1': ['Molecular Biology', 'Ecology', 'Biotechnology'],
-        'M2': ['Molecular Biology', 'Ecology', 'Biotechnology']
+    {
+        id: "002",
+        lastName: "Yacine",
+        firstName: "Ali",
+        course: "Mathematics",
+        email: "ali.yacine@student.univ-alger.dz",
+        sessions: [
+            { present: true, participated: false },
+            { present: false, participated: true },
+            { present: true, participated: true },
+            { present: true, participated: true },
+            { present: true, participated: true },
+            { present: true, participated: true }
+        ]
     },
-    'architecture': {
-        'L1': ['General'],
-        'L2': ['General'],
-        'L3': ['Urban Planning', 'Interior Design', 'Landscape'],
-        'M1': ['Urban Design', 'Sustainable Architecture', 'Heritage'],
-        'M2': ['Urban Design', 'Sustainable Architecture', 'Heritage']
-    },
-    'mathematics': {
-        'L1': ['General'],
-        'L2': ['General'],
-        'L3': ['Pure Mathematics', 'Applied Mathematics', 'Statistics'],
-        'M1': ['Algebra', 'Analysis', 'Probability'],
-        'M2': ['Algebra', 'Analysis', 'Probability']
-    },
-    'sm': {
-        'L1': ['General'],
-        'L2': ['General'],
-        'L3': ['Metallurgy', 'Polymers', 'Ceramics'],
-        'M1': ['Advanced Materials', 'Nanomaterials', 'Composite Materials'],
-        'M2': ['Advanced Materials', 'Nanomaterials', 'Composite Materials']
+    {
+        id: "003",
+        lastName: "Houcine",
+        firstName: "Rania",
+        course: "Physics",
+        email: "rania.houcine@student.univ-alger.dz",
+        sessions: [
+            { present: true, participated: true },
+            { present: true, participated: false },
+            { present: false, participated: true },
+            { present: true, participated: true },
+            { present: false, participated: false },
+            { present: false, participated: false }
+        ]
     }
-};
-
-// Level options for all departments
-const levelOptions = [
-    { value: 'L1', text: 'License 1' },
-    { value: 'L2', text: 'License 2' },
-    { value: 'L3', text: 'License 3' },
-    { value: 'M1', text: 'Master 1' },
-    { value: 'M2', text: 'Master 2' }
 ];
 
-// Auto-generate student ID
-function generateMatricule() {
-    const year = new Date().getFullYear().toString().substr(-2);
-    const random = Math.floor(1000 + Math.random() * 9000);
-    return `STU${year}${random}`;
-}
-
-// Update level options based on department
-function updateLevels() {
-    const department = document.getElementById('department');
-    const levelSelect = document.getElementById('level');
-    
-    if (!department || !levelSelect) return;
-    
-    // Clear existing options
-    levelSelect.innerHTML = '<option value="">Select Level</option>';
-    
-    if (department.value && departmentLevels[department.value]) {
-        // Add all level options
-        levelOptions.forEach(level => {
-            const option = document.createElement('option');
-            option.value = level.value;
-            option.textContent = level.text;
-            levelSelect.appendChild(option);
-        });
+// Initialize the application
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if we're on the attendance page
+    if (document.getElementById('attendance-table')) {
+        // Populate the attendance table
+        populateAttendanceTable();
+        
+        // Update statistics
+        updateStatistics();
+        
+        // Set up event listeners
+        setupEventListeners();
     }
     
-    // Clear specialty
-    const specialtySelect = document.getElementById('specialty');
-    if (specialtySelect) {
-        specialtySelect.innerHTML = '<option value="">Select Specialty</option>';
-    }
-}
-
-// Update specialty options based on level
-function updateSpecialties() {
-    const department = document.getElementById('department');
-    const level = document.getElementById('level');
-    const specialtySelect = document.getElementById('specialty');
-    
-    if (!department || !level || !specialtySelect) return;
-    
-    // Clear existing options
-    specialtySelect.innerHTML = '<option value="">Select Specialty</option>';
-    
-    if (department.value && level.value && departmentLevels[department.value] && departmentLevels[department.value][level.value]) {
-        const specialties = departmentLevels[department.value][level.value];
-        specialties.forEach(specialty => {
-            const option = document.createElement('option');
-            option.value = specialty.toLowerCase().replace(' ', '_');
-            option.textContent = specialty;
-            specialtySelect.appendChild(option);
-        });
-    }
-}
-
-// Initialize form
-document.addEventListener('DOMContentLoaded', () => {
-    const matriculeField = document.getElementById('matricule');
-    if (matriculeField && !matriculeField.value) {
-        matriculeField.value = generateMatricule();
-    }
-
-    // Add event listeners
-    const departmentSelect = document.getElementById('department');
-    const levelSelect = document.getElementById('level');
-    
-    if (departmentSelect) {
-        departmentSelect.addEventListener('change', updateLevels);
+    // Check if we're on the add student page
+    if (document.getElementById('student-form')) {
+        setupFormListeners();
     }
     
-    if (levelSelect) {
-        levelSelect.addEventListener('change', updateSpecialties);
-    }
-
-    // Form handling
-    const saveBtn = document.getElementById('saveBtn');
-    const saveAddAnotherBtn = document.getElementById('saveAddAnotherBtn');
-    const cancelBtn = document.getElementById('cancelBtn');
-
-    if (saveBtn) {
-        saveBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            handleSave(false);
-        });
-    }
-
-    if (saveAddAnotherBtn) {
-        saveAddAnotherBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            handleSave(true);
-        });
-    }
-
-    if (cancelBtn) {
-        cancelBtn.addEventListener('click', function() {
-            if (confirm('Are you sure you want to cancel? All changes will be lost.')) {
-                window.location.href = 'index.html';
-            }
-        });
-    }
+    // Initialize mobile navigation
+    initMobileNav();
 });
 
-// Handle save functionality
-function handleSave(addAnother) {
-    const matricule = document.getElementById('matricule').value;
-    const firstName = document.getElementById('firstName').value;
-    const lastName = document.getElementById('lastName').value;
-    const department = document.getElementById('department').value;
-    const level = document.getElementById('level').value;
-    const year = document.getElementById('year').value;
+// Populate the attendance table with student data
+function populateAttendanceTable() {
+    const tableBody = document.querySelector('#attendance-table tbody');
+    if (!tableBody) return;
     
-    if (matricule && firstName && lastName && department && level && year) {
-        const departmentText = document.getElementById('department').options[document.getElementById('department').selectedIndex].text;
-        const levelText = document.getElementById('level').options[document.getElementById('level').selectedIndex].text;
+    tableBody.innerHTML = '';
+    
+    students.forEach(student => {
+        const row = document.createElement('tr');
         
-        alert(`Student ${firstName} ${lastName} (${matricule}) added successfully!\nDepartment: ${departmentText}\nLevel: ${levelText}\nYear: ${year}`);
+        // Calculate absences and participations
+        const absences = student.sessions.filter(session => !session.present).length;
+        const participations = student.sessions.filter(session => session.participated).length;
         
-        if (addAnother) {
-            // Reset form with new ID for adding another student
-            document.querySelector('form').reset();
-            document.getElementById('matricule').value = generateMatricule();
-            document.getElementById('firstName').focus();
+        // Add student data to the row
+        row.innerHTML = `
+            <td>${student.id}</td>
+            <td>${student.lastName}</td>
+            <td>${student.firstName}</td>
+            <td>${student.course}</td>
+            ${student.sessions.map(session => `
+                <td class="${session.present ? 'status-present' : 'status-absent'}">
+                    <input type="checkbox" class="attendance-checkbox" ${session.present ? 'checked' : ''} data-student="${student.id}" data-session="${student.sessions.indexOf(session)}" data-type="present">
+                </td>
+                <td class="${session.participated ? 'status-present' : 'status-absent'}">
+                    <input type="checkbox" class="participation-checkbox" ${session.participated ? 'checked' : ''} data-student="${student.id}" data-session="${student.sessions.indexOf(session)}" data-type="participated">
+                </td>
+            `).join('')}
+            <td>${absences}</td>
+            <td>${participations}</td>
+            <td>${generateMessage(absences, participations)}</td>
+        `;
+        
+        // Highlight row based on absences
+        if (absences < 3) {
+            row.classList.add('row-good');
+        } else if (absences >= 3 && absences <= 4) {
+            row.classList.add('row-warning');
         } else {
-            // Just reset form with new ID
-            document.querySelector('form').reset();
-            document.getElementById('matricule').value = generateMatricule();
+            row.classList.add('row-danger');
         }
+        
+        tableBody.appendChild(row);
+    });
+    
+    // Apply jQuery effects
+    applyJQueryEffects();
+    
+    // Add event listeners to checkboxes
+    document.querySelectorAll('.attendance-checkbox, .participation-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const studentId = this.getAttribute('data-student');
+            const sessionIndex = parseInt(this.getAttribute('data-session'));
+            const type = this.getAttribute('data-type');
+            
+            // Find the student
+            const student = students.find(s => s.id === studentId);
+            if (student) {
+                if (type === 'present') {
+                    student.sessions[sessionIndex].present = this.checked;
+                } else {
+                    student.sessions[sessionIndex].participated = this.checked;
+                }
+                
+                // Update the table
+                populateAttendanceTable();
+                updateStatistics();
+            }
+        });
+    });
+}
+
+// Generate message based on absences and participations
+function generateMessage(absences, participations) {
+    if (absences < 3 && participations >= 4) {
+        return "Good attendance – Excellent participation";
+    } else if (absences >= 3 && absences <= 4) {
+        return "Warning – attendance low – You need to participate more";
+    } else if (absences >= 5) {
+        return "Excluded – too many absences – You need to participate more";
     } else {
-        alert('Please fill all required fields (*)');
+        return "Average performance";
     }
+}
+
+// Update statistics
+function updateStatistics() {
+    const totalStudents = students.length;
+    const presentToday = students.filter(student => 
+        student.sessions[0].present
+    ).length;
+    const absentToday = totalStudents - presentToday;
+    const participationRate = Math.round((students.filter(student => 
+        student.sessions.some(session => session.participated)
+    ).length / totalStudents) * 100);
+    
+    document.getElementById('total-students').textContent = totalStudents;
+    document.getElementById('present-students').textContent = presentToday;
+    document.getElementById('absent-students').textContent = absentToday;
+    document.getElementById('participation-rate').textContent = `${participationRate}%`;
+}
+
+// Set up all event listeners for attendance page
+function setupEventListeners() {
+    // Show report button
+    const showReportBtn = document.getElementById('show-report');
+    if (showReportBtn) {
+        showReportBtn.addEventListener('click', showReport);
+    }
+    
+    // Highlight excellent students button
+    const highlightBtn = document.getElementById('highlight-excellent');
+    if (highlightBtn) {
+        highlightBtn.addEventListener('click', highlightExcellentStudents);
+    }
+    
+    // Reset colors button
+    const resetBtn = document.getElementById('reset-colors');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', resetColors);
+    }
+}
+
+// Set up form listeners for add student page
+function setupFormListeners() {
+    // Form submission
+    const studentForm = document.getElementById('student-form');
+    if (studentForm) {
+        studentForm.addEventListener('submit', handleFormSubmit);
+    }
+}
+
+// Initialize mobile navigation
+function initMobileNav() {
+    const hamburger = document.querySelector('.hamburger');
+    const navMenu = document.querySelector('.nav-menu');
+    
+    if (hamburger && navMenu) {
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+        
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+    }
+}
+
+// Handle form submission
+function handleFormSubmit(event) {
+    event.preventDefault();
+    
+    // Reset previous error messages
+    clearErrorMessages();
+    
+    // Validate form fields
+    const isValid = validateForm();
+    
+    if (isValid) {
+        // Get form values
+        const studentId = document.getElementById('student-id').value;
+        const lastName = document.getElementById('last-name').value;
+        const firstName = document.getElementById('first-name').value;
+        const email = document.getElementById('email').value;
+        const course = document.getElementById('course').value;
+        
+        // Create new student object
+        const newStudent = {
+            id: studentId,
+            lastName: lastName,
+            firstName: firstName,
+            email: email,
+            course: course,
+            sessions: [
+                { present: false, participated: false },
+                { present: false, participated: false },
+                { present: false, participated: false },
+                { present: false, participated: false },
+                { present: false, participated: false },
+                { present: false, participated: false }
+            ]
+        };
+        
+        // Add new student to the array
+        students.push(newStudent);
+        
+        // Show confirmation message
+        showConfirmationMessage(`Student ${firstName} ${lastName} added successfully!`);
+        
+        // Reset form
+        document.getElementById('student-form').reset();
+    }
+}
+
+// Validate form fields
+function validateForm() {
+    let isValid = true;
+    
+    // Validate Student ID
+    const studentId = document.getElementById('student-id').value;
+    const studentIdError = document.getElementById('student-id-error');
+    if (studentId === '') {
+        studentIdError.textContent = 'Student ID is required';
+        isValid = false;
+    } else if (!/^\d+$/.test(studentId)) {
+        studentIdError.textContent = 'Student ID must contain only numbers';
+        isValid = false;
+    } else if (students.some(student => student.id === studentId)) {
+        studentIdError.textContent = 'Student ID already exists';
+        isValid = false;
+    }
+    
+    // Validate Last Name
+    const lastName = document.getElementById('last-name').value;
+    const lastNameError = document.getElementById('last-name-error');
+    if (lastName === '') {
+        lastNameError.textContent = 'Last name is required';
+        isValid = false;
+    } else if (!/^[A-Za-z]+$/.test(lastName)) {
+        lastNameError.textContent = 'Last name must contain only letters';
+        isValid = false;
+    }
+    
+    // Validate First Name
+    const firstName = document.getElementById('first-name').value;
+    const firstNameError = document.getElementById('first-name-error');
+    if (firstName === '') {
+        firstNameError.textContent = 'First name is required';
+        isValid = false;
+    } else if (!/^[A-Za-z]+$/.test(firstName)) {
+        firstNameError.textContent = 'First name must contain only letters';
+        isValid = false;
+    }
+    
+    // Validate Email
+    const email = document.getElementById('email').value;
+    const emailError = document.getElementById('email-error');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email === '') {
+        emailError.textContent = 'Email is required';
+        isValid = false;
+    } else if (!emailRegex.test(email)) {
+        emailError.textContent = 'Please enter a valid email address';
+        isValid = false;
+    }
+    
+    // Validate Course
+    const course = document.getElementById('course').value;
+    if (course === '') {
+        alert('Please select a course');
+        isValid = false;
+    }
+    
+    return isValid;
+}
+
+// Clear all error messages
+function clearErrorMessages() {
+    const errorMessages = document.querySelectorAll('.error-message');
+    errorMessages.forEach(message => {
+        message.textContent = '';
+    });
+}
+
+// Show confirmation message
+function showConfirmationMessage(message) {
+    const confirmationElement = document.getElementById('confirmation-message');
+    confirmationElement.textContent = message;
+    confirmationElement.style.display = 'block';
+    
+    // Hide confirmation message after 3 seconds
+    setTimeout(() => {
+        confirmationElement.style.display = 'none';
+    }, 3000);
+}
+
+// Show attendance report
+function showReport() {
+    const reportSection = document.getElementById('report-section');
+    const reportContent = document.getElementById('report-content');
+    
+    // Calculate report data
+    const totalStudents = students.length;
+    const presentStudents = students.filter(student => 
+        student.sessions.some(session => session.present)
+    ).length;
+    const participatingStudents = students.filter(student => 
+        student.sessions.some(session => session.participated)
+    ).length;
+    
+    // Generate report content
+    reportContent.innerHTML = `
+        <div class="report-stats">
+            <p><strong>Total Students:</strong> ${totalStudents}</p>
+            <p><strong>Students Present (at least one session):</strong> ${presentStudents}</p>
+            <p><strong>Students Participated (at least one session):</strong> ${participatingStudents}</p>
+        </div>
+        <div class="chart-container">
+            <h4>Attendance Overview</h4>
+            <div class="chart-bar" style="width: ${(presentStudents / totalStudents) * 100}%; background-color: #3498db;">
+                Present: ${presentStudents}
+            </div>
+            <div class="chart-bar" style="width: ${(participatingStudents / totalStudents) * 100}%; background-color: #2ecc71;">
+                Participated: ${participatingStudents}
+            </div>
+        </div>
+    `;
+    
+    // Show the report section
+    reportSection.style.display = 'block';
+}
+
+// Apply jQuery effects
+function applyJQueryEffects() {
+    // Highlight row on hover
+    $('#attendance-table tbody tr').hover(
+        function() {
+            $(this).css('background-color', '#e8f4fc');
+        },
+        function() {
+            // Reset to original color based on absence count
+            const absences = parseInt($(this).find('td').eq(16).text());
+            if (absences < 3) {
+                $(this).css('background-color', '#d4edda');
+            } else if (absences >= 3 && absences <= 4) {
+                $(this).css('background-color', '#fff3cd');
+            } else {
+                $(this).css('background-color', '#f8d7da');
+            }
+        }
+    );
+    
+    // Show student info on click
+    $('#attendance-table tbody tr').click(function() {
+        const lastName = $(this).find('td').eq(1).text();
+        const firstName = $(this).find('td').eq(2).text();
+        const absences = $(this).find('td').eq(16).text();
+        
+        alert(`Student: ${firstName} ${lastName}\nAbsences: ${absences}`);
+    });
+}
+
+// Highlight excellent students
+function highlightExcellentStudents() {
+    $('#attendance-table tbody tr').each(function() {
+        const absences = parseInt($(this).find('td').eq(16).text());
+        const participations = parseInt($(this).find('td').eq(17).text());
+        if (absences < 3 && participations >= 4) {
+            $(this).animate({
+                backgroundColor: '#2ecc71'
+            }, 1000);
+        }
+    });
+}
+
+// Reset row colors
+function resetColors() {
+    $('#attendance-table tbody tr').each(function() {
+        const absences = parseInt($(this).find('td').eq(16).text());
+        let color;
+        
+        if (absences < 3) {
+            color = '#d4edda';
+        } else if (absences >= 3 && absences <= 4) {
+            color = '#fff3cd';
+        } else {
+            color = '#f8d7da';
+        }
+        
+        $(this).animate({
+            backgroundColor: color
+        }, 1000);
+    });
 }
