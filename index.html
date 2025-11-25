@@ -4,28 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Attendly — Track. Report. Relax.</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <a href="#"><i class="fas fa-chart-line"></i> Attendly</a>
+                <a href="index.html"><i class="fas fa-chart-line"></i> Attendly</a>
             </div>
             <ul class="nav-menu">
                 <li class="nav-item">
-                    <a href="#home" class="nav-link"><i class="fas fa-home"></i> Home</a>
+                    <a href="index.html" class="nav-link active"><i class="fas fa-home"></i> Home</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#attendance" class="nav-link"><i class="fas fa-list"></i> Attendance List</a>
+                    <a href="attendance.html" class="nav-link"><i class="fas fa-list"></i> Attendance List</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#add-student" class="nav-link"><i class="fas fa-user-plus"></i> Add Student</a>
+                    <a href="add-student.html" class="nav-link"><i class="fas fa-user-plus"></i> Add Student</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#reports" class="nav-link"><i class="fas fa-chart-bar"></i> Reports</a>
+                    <a href="reports.html" class="nav-link"><i class="fas fa-chart-bar"></i> Reports</a>
                 </li>
             </ul>
             <div class="hamburger">
@@ -41,177 +41,58 @@
         <div class="container">
             <h1>Attendly — Track. Report. Relax.</h1>
             <p>Smart attendance tracking that saves you time and gives you reliable reports — no paperwork, no stress.</p>
-            <a href="#attendance" class="btn-primary">Get Started</a>
+            <a href="attendance.html" class="btn-primary">
+                <span class="btn-text">Get Started</span>
+                <i class="fas fa-arrow-right btn-icon"></i>
+            </a>
         </div>
     </header>
 
-    <!-- Attendance Table -->
-    <section id="attendance" class="section">
+    <!-- Features Section -->
+    <section class="features section">
         <div class="container">
-            <h2><i class="fas fa-users"></i> Student Attendance</h2>
-            
-            <!-- Attendance Stats -->
+            <h2>Why Choose Attendly?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-clock"></i>
+                    <h3>Save Time</h3>
+                    <p>Automate your attendance tracking and focus on what matters most - teaching.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chart-pie"></i>
+                    <h3>Smart Reports</h3>
+                    <p>Get detailed analytics and insights about student attendance and participation.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h3>Mobile Friendly</h3>
+                    <p>Access your attendance data from any device, anywhere, anytime.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-database"></i>
+                    <h3>Data Security</h3>
+                    <p>Your data is safe with us. We use secure local storage for all your information.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Stats Section -->
+    <section class="section" style="background-color: #f8f9fa;">
+        <div class="container">
+            <h2>Quick Overview</h2>
             <div class="stats-container">
                 <div class="stat-card">
                     <div class="stat-value stat-good" id="total-students">0</div>
-                    <div>Total Students</div>
+                    <div class="stat-label">Total Students</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value stat-warning" id="present-students">0</div>
-                    <div>Present Today</div>
+                    <div class="stat-value stat-warning" id="present-today">0</div>
+                    <div class="stat-label">Present Today</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value stat-danger" id="absent-students">0</div>
-                    <div>Absent Today</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="participation-rate">0%</div>
-                    <div>Participation Rate</div>
-                </div>
-            </div>
-            
-            <div class="table-container">
-                <table id="attendance-table">
-                    <thead>
-                        <tr>
-                            <th>Student ID</th>
-                            <th>Last Name</th>
-                            <th>First Name</th>
-                            <th>Course</th>
-                            <th colspan="2">Session 1</th>
-                            <th colspan="2">Session 2</th>
-                            <th colspan="2">Session 3</th>
-                            <th colspan="2">Session 4</th>
-                            <th colspan="2">Session 5</th>
-                            <th colspan="2">Session 6</th>
-                            <th>Absences</th>
-                            <th>Participation</th>
-                            <th>Message</th>
-                        </tr>
-                        <tr>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th>P</th>
-                            <th>Pa</th>
-                            <th>P</th>
-                            <th>Pa</th>
-                            <th>P</th>
-                            <th>Pa</th>
-                            <th>P</th>
-                            <th>Pa</th>
-                            <th>P</th>
-                            <th>Pa</th>
-                            <th>P</th>
-                            <th>Pa</th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Student data will be populated by JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Report Buttons -->
-            <div class="button-group">
-                <button id="show-report" class="btn"><i class="fas fa-chart-pie"></i> Show Report</button>
-                <button id="highlight-excellent" class="btn"><i class="fas fa-star"></i> Highlight Excellent Students</button>
-                <button id="reset-colors" class="btn"><i class="fas fa-sync-alt"></i> Reset Colors</button>
-            </div>
-            
-            <!-- Report Section -->
-            <div id="report-section" class="report-section" style="display: none;">
-                <h3><i class="fas fa-chart-bar"></i> Attendance Report</h3>
-                <div id="report-content"></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Add Student Form -->
-    <section id="add-student" class="section">
-        <div class="container">
-            <h2><i class="fas fa-user-plus"></i> Add New Student</h2>
-            <form id="student-form">
-                <div class="form-group">
-                    <label for="student-id"><i class="fas fa-id-card"></i> Student ID:</label>
-                    <input type="text" id="student-id" name="student-id">
-                    <span class="error-message" id="student-id-error"></span>
-                </div>
-                
-                <div class="form-group">
-                    <label for="last-name"><i class="fas fa-user"></i> Last Name:</label>
-                    <input type="text" id="last-name" name="last-name">
-                    <span class="error-message" id="last-name-error"></span>
-                </div>
-                
-                <div class="form-group">
-                    <label for="first-name"><i class="fas fa-user"></i> First Name:</label>
-                    <input type="text" id="first-name" name="first-name">
-                    <span class="error-message" id="first-name-error"></span>
-                </div>
-                
-                <div class="form-group">
-                    <label for="email"><i class="fas fa-envelope"></i> Email:</label>
-                    <input type="text" id="email" name="email">
-                    <span class="error-message" id="email-error"></span>
-                </div>
-                
-                <div class="form-group">
-                    <label for="course"><i class="fas fa-book"></i> Course:</label>
-                    <select id="course" name="course">
-                        <option value="">Select a course</option>
-                        <option value="Computer Science">Computer Science</option>
-                        <option value="Mathematics">Mathematics</option>
-                        <option value="Physics">Physics</option>
-                        <option value="Chemistry">Chemistry</option>
-                        <option value="Biology">Biology</option>
-                    </select>
-                </div>
-                
-                <button type="submit" class="btn"><i class="fas fa-plus-circle"></i> Add Student</button>
-            </form>
-            <div id="confirmation-message" class="confirmation" style="display: none;"></div>
-        </div>
-    </section>
-
-    <!-- Reports Section -->
-    <section id="reports" class="section">
-        <div class="container">
-            <h2><i class="fas fa-chart-bar"></i> Reports</h2>
-            
-            <!-- Pie Chart Section -->
-            <div class="report-info">
-                <h3><i class="fas fa-chart-pie"></i> Attendance Statistics</h3>
-                <div class="pie-chart-container">
-                    <div class="pie-chart">
-                        <div class="pie-center">Students</div>
-                    </div>
-                </div>
-                <div class="chart-legend">
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: #27ae60;"></div>
-                        <span>Excellent: 1 (33%)</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: #3498db;"></div>
-                        <span>Good: 0 (0%)</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: #f39c12;"></div>
-                        <span>Average: 2 (67%)</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: #e74c3c;"></div>
-                        <span>Poor: 0 (0%)</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: #95a5a6;"></div>
-                        <span>No Data: 0</span>
-                    </div>
+                    <div class="stat-value stat-danger" id="attendance-rate">0%</div>
+                    <div class="stat-label">Attendance Rate</div>
                 </div>
             </div>
         </div>
@@ -224,10 +105,10 @@
                 <div class="footer-column">
                     <h3>Site Map</h3>
                     <ul>
-                        <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
-                        <li><a href="#attendance"><i class="fas fa-list"></i> Attendance List</a></li>
-                        <li><a href="#add-student"><i class="fas fa-user-plus"></i> Add Student</a></li>
-                        <li><a href="#reports"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                        <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="attendance.html"><i class="fas fa-list"></i> Attendance List</a></li>
+                        <li><a href="add-student.html"><i class="fas fa-user-plus"></i> Add Student</a></li>
+                        <li><a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
@@ -263,6 +144,7 @@
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="script.js"></script>
+    <script src="main.js"></script>
+    <script src="index.js"></script>
 </body>
 </html>
