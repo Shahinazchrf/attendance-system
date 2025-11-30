@@ -1,26 +1,12 @@
 <?php
-require_once 'auth.php';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
-    
-    if ($auth->login($username, $password)) {
-        header("Location: index.php");
-        exit;
-    } else {
-        $error = "Invalid credentials - Try: admin/password";
-    }
-}
+session_start();
 ?>
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Attendly</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Attendly - Connexion</title>
     <style>
         * {
             margin: 0;
@@ -35,148 +21,150 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .login-container {
-            width: 100%;
-            max-width: 400px;
             padding: 20px;
         }
 
-        .login-form {
+        .login-container {
             background: white;
-            padding: 40px;
+            padding: 2.5rem;
             border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .logo {
             text-align: center;
+            margin-bottom: 2rem;
         }
 
-        .login-form h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 2.5rem;
+        .logo h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
         }
 
-        .login-form h2 {
-            color: #3498db;
-            margin-bottom: 30px;
-            font-weight: 300;
+        .logo p {
+            color: #666;
+            font-size: 0.9rem;
         }
 
         .form-group {
-            margin-bottom: 20px;
-            text-align: left;
+            margin-bottom: 1.5rem;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
-            color: #2c3e50;
-            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
 
         input[type="text"],
         input[type="password"] {
             width: 100%;
             padding: 12px 15px;
-            border: 2px solid #e9ecef;
+            border: 2px solid #e1e1e1;
             border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            background: #f8f9fa;
         }
 
         input[type="text"]:focus,
         input[type="password"]:focus {
             outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            border-color: #667eea;
+            background: white;
         }
 
-        .btn-submit {
-            background: linear-gradient(135deg, #3498db, #2980b9);
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 15px 30px;
             border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            font-size: 1.1rem;
-            width: 100%;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            transition: transform 0.2s;
         }
 
-        .btn-submit:hover {
-            background: linear-gradient(135deg, #2980b9, #3498db);
+        .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
         }
 
-        .error-message {
-            background-color: #f8d7da;
-            color: #721c24;
+        .error {
+            background: #fee;
+            color: #c33;
             padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid #fcc;
+            font-size: 0.9rem;
         }
 
         .demo-accounts {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #f8f9fa;
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #f8f9fa;
             border-radius: 8px;
-            text-align: left;
+            font-size: 0.85rem;
         }
 
         .demo-accounts h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+            color: #333;
+            font-size: 1rem;
         }
 
-        .demo-accounts p {
-            margin-bottom: 8px;
-            color: #6c757d;
-            font-size: 0.9rem;
+        .demo-account {
+            margin: 0.5rem 0;
+            padding: 0.8rem;
+            background: white;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+            font-family: monospace;
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <div class="login-form">
-            <h1><i class="fas fa-chart-line"></i> Attendly</h1>
-            <h2>Login to Your Account</h2>
-            
-            <?php if (isset($error)): ?>
-                <div class="error-message"><?php echo $error; ?></div>
-            <?php endif; ?>
-            
-            <form method="POST">
-                <div class="form-group">
-                    <label for="username"><i class="fas fa-user"></i> Username:</label>
-                    <input type="text" id="username" name="username" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="password"><i class="fas fa-lock"></i> Password:</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                
-                <button type="submit" class="btn-submit">
-                    <i class="fas fa-sign-in-alt"></i>
-                    Login
-                </button>
-            </form>
-            
-            <div class="demo-accounts">
-                <h3>Demo Accounts (Password for all: <strong>password</strong>):</h3>
-                <p><strong>Admin:</strong> admin</p>
-                <p><strong>Professor:</strong> prof</p>
-                <p><strong>Student 1:</strong> student1</p>
-                <p><strong>Student 2:</strong> student2</p>
+        <div class="logo">
+            <h1>ATTENDLY</h1>
+            <p>Système de Gestion de Présence</p>
+        </div>
+
+        <?php if (isset($_GET['error']) && $_GET['error'] == 1): ?>
+            <div class="error">Identifiants incorrects. Veuillez réessayer.</div>
+        <?php endif; ?>
+
+        <form action="auth.php" method="POST">
+            <div class="form-group">
+                <label for="username">Nom d'utilisateur:</label>
+                <input type="text" id="username" name="username" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Mot de passe:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <button type="submit" class="btn">Se connecter</button>
+        </form>
+
+        <div class="demo-accounts">
+            <h3>Comptes de démonstration:</h3>
+            <div class="demo-account">
+                <strong>Admin:</strong> admin / password
+            </div>
+            <div class="demo-account">
+                <strong>Professeur:</strong> prof.ahmed / password
+            </div>
+            <div class="demo-account">
+                <strong>Étudiant:</strong> etudiant1 / password
             </div>
         </div>
     </div>

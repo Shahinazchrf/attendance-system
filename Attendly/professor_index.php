@@ -1,77 +1,45 @@
 <?php
-// student_index.php
+// professor_index.php
 require_once 'config.php';
 
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'professor') {
     header("Location: login.php");
     exit();
 }
 
+// Récupérer les cours du professeur
 $pdo = getDBConnection();
-$student_courses = array();
-$recent_attendance = array();
+$courses = array();
 
+// Cours disponibles pour le professeur
+$available_courses = array(
+    array('id' => 1, 'course_code' => 'PAW', 'course_name' => 'Programmation Applications Web', 'student_count' => 35),
+    array('id' => 2, 'course_code' => 'GL', 'course_name' => 'Génie Logiciel', 'student_count' => 28),
+    array('id' => 3, 'course_code' => 'IHM', 'course_name' => 'Interactions Homme-Machine', 'student_count' => 32),
+    array('id' => 4, 'course_code' => 'SID', 'course_name' => 'Systèmes d\'Information Décisionnels', 'student_count' => 25),
+    array('id' => 5, 'course_code' => 'SAD', 'course_name' => 'Systèmes d\'Aide à la Décision', 'student_count' => 22),
+    array('id' => 6, 'course_code' => 'ASI', 'course_name' => 'Architecture des Systèmes d\'Information', 'student_count' => 30)
+);
+
+$courses = $available_courses;
+
+// Récupérer les sessions récentes
+$recent_sessions = array();
 if ($pdo) {
     try {
-        // Récupérer les cours de l'étudiant
         $stmt = $pdo->prepare("
-            SELECT c.id, c.course_code, c.course_name, c.description,
-                   u.first_name as prof_first_name, u.last_name as prof_last_name
-            FROM courses c
-            JOIN student_courses sc ON c.id = sc.course_id
-            JOIN users u ON c.professor_id = u.id
-            WHERE sc.student_id = ?
-            ORDER BY c.course_name
-        ");
-        $stmt->execute([$_SESSION['user_id']]);
-        $student_courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        // Récupérer les présences récentes
-        $stmt = $pdo->prepare("
-            SELECT ar.status, ar.check_in_time, s.session_topic, s.session_date,
-                   c.course_code, c.course_name
-            FROM attendance_records ar
-            JOIN attendance_sessions s ON ar.session_id = s.id
+            SELECT s.id, s.session_topic, s.session_date, s.status,
+                   c.course_name, c.course_code
+            FROM attendance_sessions s
             JOIN courses c ON s.course_id = c.id
-            WHERE ar.student_id = ?
+            WHERE s.created_by = ?
             ORDER BY s.session_date DESC
             LIMIT 5
         ");
         $stmt->execute([$_SESSION['user_id']]);
-        $recent_attendance = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
+        $recent_sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
-        error_log("Erreur: " . $e->getMessage());
-        // Données de test si la base n'est pas accessible
-        $student_courses = array(
-            array(
-                'id' => 1,
-                'course_code' => 'PAW',
-                'course_name' => 'Programmation Applications Web',
-                'description' => 'Développement web moderne',
-                'prof_first_name' => 'Ahmed',
-                'prof_last_name' => 'Benzema'
-            ),
-            array(
-                'id' => 2,
-                'course_code' => 'GL', 
-                'course_name' => 'Génie Logiciel',
-                'description' => 'Conception et développement logiciel',
-                'prof_first_name' => 'Fatima',
-                'prof_last_name' => 'Zohra'
-            )
-        );
-        
-        $recent_attendance = array(
-            array(
-                'status' => 'present',
-                'check_in_time' => date('Y-m-d H:i:s'),
-                'session_topic' => 'Introduction à PHP',
-                'session_date' => date('Y-m-d'),
-                'course_code' => 'PAW',
-                'course_name' => 'Programmation Applications Web'
-            )
-        );
+        error_log("Erreur sessions: " . $e->getMessage());
     }
 }
 ?>
@@ -80,7 +48,7 @@ if ($pdo) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tableau de Bord Étudiant - Attendly</title>
+    <title>Tableau de Bord Professeur - Attendly</title>
     <style>
         * {
             margin: 0;
@@ -133,7 +101,7 @@ if ($pdo) {
         }
 
         .role-tag {
-            background: #28a745;
+            background: #3498db;
             color: white;
             padding: 4px 12px;
             border-radius: 20px;
@@ -173,34 +141,57 @@ if ($pdo) {
             font-size: 16px;
         }
 
-        /* Stats Grid */
-        .stats-grid {
+        /* Features Grid */
+        .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
             margin-bottom: 50px;
         }
 
-        .stat-card {
+        .feature-card {
             background: white;
-            padding: 25px;
+            padding: 30px;
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            text-align: center;
-            border-top: 4px solid #28a745;
+            border: 1px solid #e1e5e9;
+            transition: transform 0.2s ease;
         }
 
-        .stat-number {
-            font-size: 36px;
-            font-weight: 700;
+        .feature-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .feature-card h3 {
             color: #333;
-            margin-bottom: 5px;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
         }
 
-        .stat-label {
+        .feature-card p {
             color: #666;
             font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
             font-weight: 500;
+            transition: background 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #0056b3;
         }
 
         /* Courses Grid */
@@ -240,12 +231,12 @@ if ($pdo) {
         .course-description {
             color: #888;
             font-size: 13px;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             line-height: 1.4;
         }
 
-        .course-prof {
-            color: #666;
+        .course-stats {
+            color: #888;
             font-size: 13px;
             margin-bottom: 15px;
         }
@@ -256,7 +247,7 @@ if ($pdo) {
             flex-wrap: wrap;
         }
 
-        .btn {
+        .btn-sm {
             padding: 8px 16px;
             font-size: 12px;
             text-decoration: none;
@@ -267,36 +258,36 @@ if ($pdo) {
             transition: all 0.2s ease;
         }
 
-        .btn:hover {
+        .btn-sm:hover {
             background: #e9ecef;
         }
 
-        .btn-primary {
+        .btn-primary-sm {
             background: #007bff;
             color: white;
             border-color: #007bff;
         }
 
-        .btn-primary:hover {
+        .btn-primary-sm:hover {
             background: #0056b3;
         }
 
-        /* Recent Activity */
-        .recent-activity {
+        /* Recent Sessions */
+        .recent-sessions {
             background: white;
             padding: 25px;
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        .recent-activity h3 {
+        .recent-sessions h3 {
             color: #333;
             font-size: 20px;
             font-weight: 600;
             margin-bottom: 20px;
         }
 
-        .activity-item {
+        .session-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -304,42 +295,37 @@ if ($pdo) {
             border-bottom: 1px solid #e9ecef;
         }
 
-        .activity-item:last-child {
+        .session-item:last-child {
             border-bottom: none;
         }
 
-        .activity-info h4 {
+        .session-info h4 {
             color: #333;
             font-size: 14px;
             font-weight: 600;
             margin-bottom: 4px;
         }
 
-        .activity-details {
+        .session-details {
             color: #666;
             font-size: 13px;
         }
 
-        .activity-status {
+        .session-status {
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
         }
 
-        .status-present {
+        .status-open {
             background: #d4edda;
             color: #155724;
         }
 
-        .status-absent {
+        .status-closed {
             background: #f8d7da;
             color: #721c24;
-        }
-
-        .status-late {
-            background: #fff3cd;
-            color: #856404;
         }
 
         .empty-state {
@@ -353,10 +339,10 @@ if ($pdo) {
     <!-- Navigation -->
     <div class="nav-header">
         <div class="nav-content">
-            <a href="student_index.php" class="nav-brand">ATTENDLY</a>
+            <a href="professor_index.php" class="nav-brand">ATTENDLY</a>
             <div class="user-info">
-                <span>Connecté en tant que <strong><?php echo $_SESSION['first_name']; ?></strong></span>
-                <span class="role-tag">ÉTUDIANT</span>
+                <span>Connecté en tant que <strong>Professeur <?php echo $_SESSION['first_name']; ?></strong></span>
+                <span class="role-tag">PROFESSEUR</span>
                 <a href="logout.php" class="logout-btn">Déconnexion</a>
             </div>
         </div>
@@ -364,83 +350,79 @@ if ($pdo) {
 
     <div class="container">
         <div class="header">
-            <h1>Tableau de Bord Étudiant</h1>
-            <p>Bienvenue, <?php echo $_SESSION['first_name']; ?>! Consultez vos cours et présences.</p>
+            <h1>Tableau de Bord Professeur</h1>
+            <p>Bienvenue, Professeur <?php echo $_SESSION['first_name']; ?>! Gérez vos cours et présences.</p>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number"><?php echo count($student_courses); ?></div>
-                <div class="stat-label">Cours inscrits</div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>Créer une Session</h3>
+                <p>Créez une nouvelle session de présence pour vos cours.</p>
+                <a href="create_session.php" class="btn">Créer Session</a>
             </div>
-            <div class="stat-card">
-                <div class="stat-number">85%</div>
-                <div class="stat-label">Taux de présence</div>
+            
+            <div class="feature-card">
+                <h3>Gérer les Présences</h3>
+                <p>Prenez les présences et consultez les statistiques.</p>
+                <a href="attendance.php" class="btn">Voir les Présences</a>
             </div>
-            <div class="stat-card">
-                <div class="stat-number">12</div>
-                <div class="stat-label">Sessions ce mois</div>
+            
+            <div class="feature-card">
+                <h3>Justifications</h3>
+                <p>Gérez les demandes de justification d'absence.</p>
+                <a href="justification_requests.php" class="btn">Voir les Justifications</a>
             </div>
         </div>
 
         <div style="margin-bottom: 50px;">
             <h2 style="color: #333; margin-bottom: 20px;">Mes Cours</h2>
             
-            <?php if (count($student_courses) > 0): ?>
+            <?php if (count($courses) > 0): ?>
                 <div class="courses-grid">
-                    <?php foreach ($student_courses as $course): ?>
+                    <?php foreach ($courses as $course): ?>
                         <div class="course-card">
                             <h4><?php echo htmlspecialchars($course['course_name']); ?></h4>
                             <div class="course-code"><?php echo htmlspecialchars($course['course_code']); ?></div>
-                            <?php if (!empty($course['description'])): ?>
-                                <div class="course-description"><?php echo htmlspecialchars($course['description']); ?></div>
-                            <?php endif; ?>
-                            <div class="course-prof">
-                                Professeur: <?php echo htmlspecialchars($course['prof_first_name'] . ' ' . $course['prof_last_name']); ?>
-                            </div>
+                            <div class="course-stats"><?php echo $course['student_count']; ?> étudiants inscrits</div>
                             <div class="course-actions">
-                                <a href="student_course_attendance.php?course_id=<?php echo $course['id']; ?>" class="btn btn-primary">Voir les présences</a>
-                                <a href="my_attendance.php?course_id=<?php echo $course['id']; ?>" class="btn">Mes statistiques</a>
+                                <a href="take_attendance.php?course_id=<?php echo $course['id']; ?>" class="btn-sm btn-primary-sm">Prendre présence</a>
+                                <a href="attendance_summary.php?course_id=<?php echo $course['id']; ?>" class="btn-sm">Résumé</a>
+                                <a href="create_session.php?course_id=<?php echo $course['id']; ?>" class="btn-sm">Nouvelle session</a>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
             <?php else: ?>
                 <div class="empty-state">
-                    <p>Vous n'êtes inscrit à aucun cours pour le moment.</p>
+                    <p>Aucun cours assigné pour le moment.</p>
+                    <a href="create_session.php" class="btn" style="margin-top: 15px;">Créer votre premier cours</a>
                 </div>
             <?php endif; ?>
         </div>
 
-        <!-- Activité Récente -->
-        <div class="recent-activity">
-            <h3>Activité Récente</h3>
+        <!-- Sessions Récentes -->
+        <div class="recent-sessions">
+            <h3>Sessions Récentes</h3>
             
-            <?php if (count($recent_attendance) > 0): ?>
-                <?php foreach ($recent_attendance as $attendance): ?>
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <h4><?php echo htmlspecialchars($attendance['course_code'] . ' - ' . $attendance['session_topic']); ?></h4>
-                            <div class="activity-details">
-                                <?php echo date('d/m/Y H:i', strtotime($attendance['session_date'])); ?>
+            <?php if (count($recent_sessions) > 0): ?>
+                <?php foreach ($recent_sessions as $session): ?>
+                    <div class="session-item">
+                        <div class="session-info">
+                            <h4><?php echo htmlspecialchars($session['session_topic']); ?></h4>
+                            <div class="session-details">
+                                <?php echo htmlspecialchars($session['course_code']); ?> • 
+                                <?php echo date('d/m/Y H:i', strtotime($session['session_date'])); ?>
                             </div>
                         </div>
-                        <div class="activity-status status-<?php echo $attendance['status']; ?>">
-                            <?php 
-                            $status_labels = array(
-                                'present' => 'Présent',
-                                'absent' => 'Absent',
-                                'late' => 'En retard',
-                                'excused' => 'Excusé'
-                            );
-                            echo $status_labels[$attendance['status']] ?? $attendance['status'];
-                            ?>
+                        <div class="session-status status-<?php echo $session['status']; ?>">
+                            <?php echo $session['status'] === 'open' ? 'Ouverte' : 'Fermée'; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="empty-state">
-                    <p>Aucune activité récente.</p>
+                    <p>Aucune session récente.</p>
+                    <a href="create_session.php" class="btn-sm" style="margin-top: 10px;">Créer une session</a>
                 </div>
             <?php endif; ?>
         </div>

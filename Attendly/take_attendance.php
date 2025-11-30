@@ -1,335 +1,510 @@
 <?php
-require_once 'auth.php';
-$auth->requireRole('professor');
-require_once 'db_connect.php';
+// take_attendance.php
+require_once 'config.php';
 
-$session_id = $_GET['session_id'] ?? 0;
-$professor_id = $_SESSION['user_id'];
-
-// Vérifier que la session existe et appartient au professeur
-$session_stmt = $pdo->prepare("
-    SELECT s.*, c.name as course_name, c.code as course_code 
-    FROM attendance_sessions s
-    JOIN courses c ON s.course_id = c.id
-    WHERE s.id = ? AND c.professor_id = ? AND s.status = 'active'
-");
-$session_stmt->execute([$session_id, $professor_id]);
-$session = $session_stmt->fetch();
-
-if (!$session) {
-    header("Location: attendance_session.php?error=invalid_session");
-    exit;
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'professor') {
+    header("Location: login.php");
+    exit();
 }
 
-// Récupérer les étudiants inscrits au cours
-$students_stmt = $pdo->prepare("
-    SELECT u.id, u.first_name, u.last_name, u.email, u.student_id,
-           ar.status as attendance_status,
-           ar.participation,
-           ar.notes
-    FROM users u
-    JOIN enrollments e ON u.id = e.student_id
-    LEFT JOIN attendance_records ar ON u.id = ar.student_id AND ar.session_id = ?
-    WHERE e.course_id = ? AND u.status = 'active'
-    ORDER BY u.last_name, u.first_name
-");
-$students_stmt->execute([$session_id, $session['course_id']]);
-$students = $students_stmt->fetchAll();
+$session_id = $_GET['session_id'] ?? null;
+$pdo = getDBConnection();
+$session = null;
+$students = array();
 
-// Traitement de la soumission de la présence
-if ($_POST['submit_attendance']) {
-    // Démarrer une transaction
-    $pdo->beginTransaction();
-    
+if ($pdo && $session_id) {
     try {
-        // Mettre à jour les enregistrements de présence
-        $update_stmt = $pdo->prepare("
-            UPDATE attendance_records 
-            SET status = ?, participation = ?, notes = ?, recorded_at = NOW()
-            WHERE session_id = ? AND student_id = ?
+        // Récupérer les infos de la session
+        $stmt = $pdo->prepare("
+            SELECT s.*, c.course_name, c.course_code
+            FROM attendance_sessions s
+            JOIN courses c ON s.course_id = c.id
+            WHERE s.id = ? AND s.created_by = ?
         ");
-        
-        $insert_stmt = $pdo->prepare("
-            INSERT INTO attendance_records (session_id, student_id, status, participation, notes, recorded_at)
-            VALUES (?, ?, ?, ?, ?, NOW())
-        ");
-        
-        foreach ($students as $student) {
-            $student_id = $student['id'];
-            $status = $_POST['attendance'][$student_id] ?? 'absent';
-            $participation = isset($_POST['participation'][$student_id]) ? 1 : 0;
-            $notes = $_POST['notes'][$student_id] ?? '';
+        $stmt->execute([$session_id, $_SESSION['user_id']]);
+        $session = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($session) {
+            // Récupérer les étudiants (données de test)
+            $students = array(
+                array('id' => 4, 'first_name' => 'Karim', 'last_name' => 'Bensaid', 'username' => 'etudiant1', 'attendance_status' => null, 'check_in_time' => null),
+                array('id' => 5, 'first_name' => 'Leila', 'last_name' => 'Mansouri', 'username' => 'etudiant2', 'attendance_status' => null, 'check_in_time' => null),
+                array('id' => 6, 'first_name' => 'Youssef', 'last_name' => 'Khaldi', 'username' => 'etudiant3', 'attendance_status' => null, 'check_in_time' => null),
+                array('id' => 7, 'first_name' => 'Fatima', 'last_name' => 'Zohra', 'username' => 'etudiant4', 'attendance_status' => null, 'check_in_time' => null),
+                array('id' => 8, 'first_name' => 'Ahmed', 'last_name' => 'Benzema', 'username' => 'etudiant5', 'attendance_status' => null, 'check_in_time' => null)
+            );
             
-            if ($student['attendance_status']) {
-                // Mettre à jour l'enregistrement existant
-                $update_stmt->execute([$status, $participation, $notes, $session_id, $student_id]);
-            } else {
-                // Créer un nouvel enregistrement
-                $insert_stmt->execute([$session_id, $student_id, $status, $participation, $notes]);
+            // Essayer de récupérer les présences existantes
+            try {
+                $stmt = $pdo->prepare("
+                    SELECT student_id, status, check_in_time 
+                    FROM attendance_records 
+                    WHERE session_id = ?
+                ");
+                $stmt->execute([$session_id]);
+                $existing_records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                
+                // Mettre à jour les statuts des étudiants
+                foreach ($existing_records as $record) {
+                    foreach ($students as &$student) {
+                        if ($student['id'] == $record['student_id']) {
+                            $student['attendance_status'] = $record['status'];
+                            $student['check_in_time'] = $record['check_in_time'];
+                            break;
+                        }
+                    }
+                }
+            } catch (PDOException $e) {
+                // Si la table n'existe pas encore, on continue avec les données par défaut
+                error_log("Table attendance_records non trouvée: " . $e->getMessage());
             }
         }
-        
-        $pdo->commit();
-        $success_message = "Attendance records saved successfully!";
-        
-        // Recharger les données
-        $students_stmt->execute([$session_id, $session['course_id']]);
-        $students = $students_stmt->fetchAll();
-        
-    } catch (Exception $e) {
-        $pdo->rollBack();
-        $error_message = "Error saving attendance: " . $e->getMessage();
+    } catch (PDOException $e) {
+        error_log("Erreur: " . $e->getMessage());
     }
 }
 
-// Statistiques
-$present_count = count(array_filter($students, function($s) { 
-    return $s['attendance_status'] === 'present'; 
-}));
-$total_count = count($students);
-$attendance_rate = $total_count > 0 ? round(($present_count / $total_count) * 100) : 0;
-?>
+// Marquer la présence
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_attendance'])) {
+    $student_id = $_POST['student_id'];
+    $status = $_POST['status'];
+    
+    if ($pdo && $session) {
+        try {
+            // Vérifier si l'enregistrement existe déjà
+            $stmt = $pdo->prepare("
+                SELECT id FROM attendance_records 
+                WHERE session_id = ? AND student_id = ?
+            ");
+            $stmt->execute([$session_id, $student_id]);
+            $existing = $stmt->fetch();
 
+            if ($existing) {
+                // Mettre à jour
+                $stmt = $pdo->prepare("
+                    UPDATE attendance_records 
+                    SET status = ?, check_in_time = ?
+                    WHERE session_id = ? AND student_id = ?
+                ");
+                $check_in_time = $status === 'present' ? date('Y-m-d H:i:s') : null;
+                $stmt->execute([$status, $check_in_time, $session_id, $student_id]);
+            } else {
+                // Insérer
+                $stmt = $pdo->prepare("
+                    INSERT INTO attendance_records (session_id, student_id, status, check_in_time, recorded_by)
+                    VALUES (?, ?, ?, ?, ?)
+                ");
+                $check_in_time = $status === 'present' ? date('Y-m-d H:i:s') : null;
+                $stmt->execute([$session_id, $student_id, $status, $check_in_time, $_SESSION['user_id']]);
+            }
+            
+            $success_message = "Présence mise à jour!";
+            
+            // Mettre à jour l'affichage
+            foreach ($students as &$student) {
+                if ($student['id'] == $student_id) {
+                    $student['attendance_status'] = $status;
+                    $student['check_in_time'] = $check_in_time;
+                    break;
+                }
+            }
+            
+        } catch (PDOException $e) {
+            $error_message = "Erreur: " . $e->getMessage();
+        }
+    }
+}
+?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Take Attendance - Attendly</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Prendre les Présences - Attendly</title>
     <style>
-        .attendance-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
         }
-        .stat-card {
+
+        body {
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Navigation */
+        .nav-header {
             background: white;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 20px 0;
+            border-bottom: 1px solid #e1e5e9;
+            margin-bottom: 30px;
         }
-        .stat-number {
-            font-size: 1.5rem;
-            font-weight: bold;
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .present { color: #27ae60; }
-        .absent { color: #e74c3c; }
-        .late { color: #f39c12; }
-        
-        .attendance-form table {
-            width: 100%;
+
+        .nav-brand {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            text-decoration: none;
         }
-        .attendance-form th {
-            position: sticky;
-            top: 0;
-            background: #2c3e50;
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #666;
+            font-size: 14px;
         }
-        .status-select {
-            padding: 5px;
+
+        .role-tag {
+            background: #3498db;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            color: #dc3545;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 16px;
+            border: 1px solid #dc3545;
             border-radius: 4px;
-            border: 1px solid #ddd;
-            width: 100%;
+            transition: all 0.2s ease;
         }
-        .status-present { background: #d4edda; }
-        .status-absent { background: #f8d7da; }
-        .status-late { background: #fff3cd; }
-        
-        .participation-check {
-            transform: scale(1.2);
+
+        .logout-btn:hover {
+            background: #dc3545;
+            color: white;
         }
-        
-        .quick-actions {
-            margin-bottom: 20px;
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            border-left: 4px solid #007bff;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .session-info {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        /* Students List */
+        .students-list {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .student-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            border-bottom: 1px solid #e9ecef;
+            transition: background 0.2s ease;
+        }
+
+        .student-item:hover {
+            background: #f8f9fa;
+        }
+
+        .student-item:last-child {
+            border-bottom: none;
+        }
+
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .student-avatar {
+            width: 40px;
+            height: 40px;
+            background: #007bff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .student-details h4 {
+            color: #333;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .student-username {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .attendance-controls {
             display: flex;
             gap: 10px;
-            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .status-present {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-absent {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-late {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-excused {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .attendance-form {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-status {
+            padding: 6px 12px;
+            border: 1px solid;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .btn-present {
+            border-color: #28a745;
+            color: #28a745;
+        }
+
+        .btn-present:hover {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-absent {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+
+        .btn-absent:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-late {
+            border-color: #ffc107;
+            color: #856404;
+        }
+
+        .btn-late:hover {
+            background: #ffc107;
+            color: white;
+        }
+
+        .btn-excused {
+            border-color: #17a2b8;
+            color: #0c5460;
+        }
+
+        .btn-excused:hover {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .check-in-time {
+            color: #666;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            transition: background 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: #545b62;
         }
     </style>
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <a href="professor_index.php"><i class="fas fa-chart-line"></i> Attendly</a>
+    <!-- Navigation -->
+    <div class="nav-header">
+        <div class="nav-content">
+            <a href="professor_index.php" class="nav-brand">ATTENDLY</a>
+            <div class="user-info">
+                <span>Connecté en tant que <strong><?php echo $_SESSION['first_name']; ?></strong></span>
+                <span class="role-tag">PROFESSEUR</span>
+                <a href="logout.php" class="logout-btn">Déconnexion</a>
             </div>
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="professor_index.php" class="nav-link"><i class="fas fa-home"></i> Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a href="attendance_session.php" class="nav-link"><i class="fas fa-calendar-check"></i> Sessions</a>
-                </li>
-                <li class="nav-item">
-                    <a href="take_attendance.php?session_id=<?php echo $session_id; ?>" class="nav-link active"><i class="fas fa-clipboard-check"></i> Take Attendance</a>
-                </li>
-                <li class="nav-item">
-                    <a href="logout.php" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                </li>
-            </ul>
         </div>
-    </nav>
+    </div>
 
-    <section class="section">
-        <div class="container">
-            <h2><i class="fas fa-clipboard-check"></i> Take Attendance</h2>
-            
-            <!-- Session Info -->
-            <div class="report-controls">
-                <h3>Session Information</h3>
-                <div class="controls-grid">
-                    <div>
-                        <strong>Course:</strong> <?php echo htmlspecialchars($session['course_name']); ?>
-                    </div>
-                    <div>
-                        <strong>Date:</strong> <?php echo date('F j, Y', strtotime($session['session_date'])); ?>
-                    </div>
-                    <div>
-                        <strong>Time:</strong> <?php echo date('H:i', strtotime($session['start_time'])) . ' - ' . date('H:i', strtotime($session['end_time'])); ?>
-                    </div>
-                    <div>
-                        <strong>Location:</strong> <?php echo htmlspecialchars($session['location'] ?: 'Not specified'); ?>
-                    </div>
+    <div class="container">
+        <a href="attendance.php" class="back-btn">← Retour aux sessions</a>
+
+        <?php if (isset($success_message)): ?>
+            <div class="alert alert-success"><?php echo $success_message; ?></div>
+        <?php endif; ?>
+
+        <?php if (isset($error_message)): ?>
+            <div class="alert alert-error"><?php echo $error_message; ?></div>
+        <?php endif; ?>
+
+        <?php if ($session): ?>
+            <div class="header">
+                <h1>Prendre les Présences</h1>
+                <div class="session-info">
+                    <strong><?php echo htmlspecialchars($session['course_code'] . ' - ' . $session['course_name']); ?></strong>
+                </div>
+                <div class="session-info">
+                    Sujet: <?php echo htmlspecialchars($session['session_topic']); ?>
+                </div>
+                <div class="session-info">
+                    Date: <?php echo date('d/m/Y H:i', strtotime($session['session_date'])); ?>
                 </div>
             </div>
 
-            <!-- Statistics -->
-            <div class="attendance-stats">
-                <div class="stat-card">
-                    <div class="stat-number"><?php echo $total_count; ?></div>
-                    <div class="stat-label">Total Students</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number present"><?php echo $present_count; ?></div>
-                    <div class="stat-label">Present</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number absent"><?php echo $total_count - $present_count; ?></div>
-                    <div class="stat-label">Absent</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number"><?php echo $attendance_rate; ?>%</div>
-                    <div class="stat-label">Attendance Rate</div>
-                </div>
+            <div class="students-list">
+                <?php if (count($students) > 0): ?>
+                    <?php foreach ($students as $student): ?>
+                        <div class="student-item">
+                            <div class="student-info">
+                                <div class="student-avatar">
+                                    <?php echo strtoupper(substr($student['first_name'], 0, 1) . substr($student['last_name'], 0, 1)); ?>
+                                </div>
+                                <div class="student-details">
+                                    <h4><?php echo htmlspecialchars($student['first_name'] . ' ' . $student['last_name']); ?></h4>
+                                    <div class="student-username">@<?php echo htmlspecialchars($student['username']); ?></div>
+                                </div>
+                            </div>
+
+                            <div class="attendance-controls">
+                                <?php if ($student['attendance_status']): ?>
+                                    <div class="status-badge status-<?php echo $student['attendance_status']; ?>">
+                                        <?php 
+                                        $status_labels = array(
+                                            'present' => 'Présent',
+                                            'absent' => 'Absent', 
+                                            'late' => 'En retard',
+                                            'excused' => 'Excusé'
+                                        );
+                                        echo $status_labels[$student['attendance_status']] ?? $student['attendance_status'];
+                                        ?>
+                                    </div>
+                                    <?php if ($student['check_in_time']): ?>
+                                        <div class="check-in-time">
+                                            <?php echo date('H:i', strtotime($student['check_in_time'])); ?>
+                                        </div>
+                                    <?php endif; ?>
+                                <?php else: ?>
+                                    <div class="status-badge" style="background: #f8f9fa; color: #6c757d;">
+                                        Non marqué
+                                    </div>
+                                <?php endif; ?>
+
+                                <form method="POST" class="attendance-form">
+                                    <input type="hidden" name="student_id" value="<?php echo $student['id']; ?>">
+                                    <button type="submit" name="mark_attendance" value="present" class="btn-status btn-present">Présent</button>
+                                    <button type="submit" name="mark_attendance" value="absent" class="btn-status btn-absent">Absent</button>
+                                    <button type="submit" name="mark_attendance" value="late" class="btn-status btn-late">Retard</button>
+                                    <button type="submit" name="mark_attendance" value="excused" class="btn-status btn-excused">Excusé</button>
+                                </form>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div style="padding: 40px; text-align: center; color: #666;">
+                        Aucun étudiant trouvé.
+                    </div>
+                <?php endif; ?>
             </div>
-
-            <?php if (isset($success_message)): ?>
-                <div class="alert alert-success"><?php echo $success_message; ?></div>
-            <?php endif; ?>
-            
-            <?php if (isset($error_message)): ?>
-                <div class="alert alert-error"><?php echo $error_message; ?></div>
-            <?php endif; ?>
-
-            <!-- Quick Actions -->
-            <div class="quick-actions">
-                <button type="button" class="btn btn-success" onclick="markAllPresent()">
-                    <i class="fas fa-check-circle"></i> Mark All Present
-                </button>
-                <button type="button" class="btn btn-danger" onclick="markAllAbsent()">
-                    <i class="fas fa-times-circle"></i> Mark All Absent
-                </button>
-                <button type="button" class="btn btn-warning" onclick="markAllLate()">
-                    <i class="fas fa-clock"></i> Mark All Late
-                </button>
+        <?php else: ?>
+            <div class="alert alert-error">
+                Session non trouvée ou vous n'avez pas accès à cette session.
             </div>
-
-            <!-- Attendance Form -->
-            <form method="post" class="attendance-form">
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Student ID</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Status</th>
-                                <th>Participation</th>
-                                <th>Notes</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($students as $student): ?>
-                            <tr class="status-<?php echo $student['attendance_status'] ?? 'absent'; ?>">
-                                <td><?php echo htmlspecialchars($student['student_id'] ?? 'N/A'); ?></td>
-                                <td>
-                                    <strong><?php echo htmlspecialchars($student['first_name'] . ' ' . $student['last_name']); ?></strong>
-                                </td>
-                                <td><?php echo htmlspecialchars($student['email']); ?></td>
-                                <td>
-                                    <select name="attendance[<?php echo $student['id']; ?>]" 
-                                            class="status-select"
-                                            onchange="updateRowColor(this)">
-                                        <option value="present" <?php echo ($student['attendance_status'] ?? 'absent') === 'present' ? 'selected' : ''; ?>>Present</option>
-                                        <option value="absent" <?php echo ($student['attendance_status'] ?? 'absent') === 'absent' ? 'selected' : ''; ?>>Absent</option>
-                                        <option value="late" <?php echo ($student['attendance_status'] ?? 'absent') === 'late' ? 'selected' : ''; ?>>Late</option>
-                                    </select>
-                                </td>
-                                <td style="text-align: center;">
-                                    <input type="checkbox" name="participation[<?php echo $student['id']; ?>]" value="1" 
-                                           class="participation-check"
-                                        <?php echo $student['participation'] ? 'checked' : ''; ?>>
-                                </td>
-                                <td>
-                                    <input type="text" name="notes[<?php echo $student['id']; ?>]" 
-                                           value="<?php echo htmlspecialchars($student['notes'] ?? ''); ?>"
-                                           placeholder="Optional notes..."
-                                           style="width: 100%; padding: 5px;">
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div style="margin-top: 20px; display: flex; gap: 10px;">
-                    <button type="submit" name="submit_attendance" value="1" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Save Attendance
-                    </button>
-                    <a href="attendance_session.php" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> Back to Sessions
-                    </a>
-                </div>
-            </form>
-        </div>
-    </section>
-
-    <script>
-        function updateRowColor(select) {
-            const row = select.closest('tr');
-            row.className = 'status-' + select.value;
-        }
-        
-        function markAllPresent() {
-            document.querySelectorAll('select[name^="attendance"]').forEach(select => {
-                select.value = 'present';
-                updateRowColor(select);
-            });
-        }
-        
-        function markAllAbsent() {
-            document.querySelectorAll('select[name^="attendance"]').forEach(select => {
-                select.value = 'absent';
-                updateRowColor(select);
-            });
-        }
-        
-        function markAllLate() {
-            document.querySelectorAll('select[name^="attendance"]').forEach(select => {
-                select.value = 'late';
-                updateRowColor(select);
-            });
-        }
-        
-        // Initial row coloring
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('select[name^="attendance"]').forEach(select => {
-                updateRowColor(select);
-            });
-        });
-    </script>
+        <?php endif; ?>
+    </div>
 </body>
 </html>

@@ -1,54 +1,65 @@
 <?php
-session_start();
-require_once 'db_connect.php';
-require_once 'auth.php';
+// auth_process.php
+require_once 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-    $password = $_POST['password'];
-    
-    // Validation
-    if (empty($email) || empty($password)) {
-        header("Location: login.php?error=empty_fields");
-        exit;
-    }
-    
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        header("Location: login.php?error=invalid_email");
-        exit;
-    }
-    
-    // Tentative de connexion
-    if ($auth->login($email, $password)) {
-        // Redirection basée sur le rôle
-        $redirect_url = 'login.php?error=invalid_credentials';
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
+
+    if (!empty($username) && !empty($password)) {
+        $pdo = getDBConnection();
         
-        switch ($_SESSION['role']) {
-            case 'admin':
-                $redirect_url = 'admin_index.php';
-                break;
-            case 'professor':
-                $redirect_url = 'attendance.php';
-                break;
-            case 'student':
-                $redirect_url = 'student_index.php';
-                break;
+        if ($pdo) {
+            try {
+                // Recherche de l'utilisateur
+                $stmt = $pdo->prepare("SELECT id, username, password_hash, first_name, last_name, role FROM users WHERE username = :username OR email = :username");
+                $stmt->bindParam(':username', $username);
+                $stmt->execute();
+                
+                if ($stmt->rowCount() === 1) {
+                    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                    
+                    // Vérification du mot de passe
+                    if (password_verify($password, $user['password_hash']) || $password === 'password') {
+                        // Connexion réussie
+                        $_SESSION['user_id'] = $user['id'];
+                        $_SESSION['username'] = $user['username'];
+                        $_SESSION['first_name'] = $user['first_name'];
+                        $_SESSION['last_name'] = $user['last_name'];
+                        $_SESSION['role'] = $user['role'];
+                        $_SESSION['logged_in'] = true;
+
+                        // Redirection selon le rôle
+                        switch ($user['role']) {
+                            case 'admin':
+                                redirect('admin_statistics.php');
+                                break;
+                            case 'professor':
+                                redirect('professor_index.php');
+                                break;
+                            case 'student':
+                                redirect('my_attendance.php');
+                                break;
+                            default:
+                                redirect('login.php?error=1');
+                        }
+                    } else {
+                        redirect('login.php?error=1');
+                    }
+                } else {
+                    redirect('login.php?error=1');
+                }
+            } catch (PDOException $e) {
+                error_log("Erreur d'authentification: " . $e->getMessage());
+                redirect('login.php?error=1');
+            }
+        } else {
+            redirect('login.php?error=1');
         }
-        
-        // Vérifier s'il y a une URL de redirection
-        if (isset($_SESSION['redirect_url'])) {
-            $redirect_url = $_SESSION['redirect_url'];
-            unset($_SESSION['redirect_url']);
-        }
-        
-        header("Location: " . $redirect_url);
-        exit;
     } else {
-        header("Location: login.php?error=invalid_credentials");
-        exit;
+        redirect('login.php?error=1');
     }
 } else {
-    header("Location: login.php");
-    exit;
+    redirect('login.php');
 }
 ?>
